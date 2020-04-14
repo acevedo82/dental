@@ -1,0 +1,528 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <link href="dist/css/tabulator.min.css" rel="stylesheet" type="text/css">
+    <link href="js/jquery-ui-1.12.1.custom/jquery-ui.css" rel="stylesheet" type="text/css">
+	<link href="js/jquery-ui-1.12.1.custom/jquery-ui.theme.css" rel="stylesheet" type="text/css">
+		
+	<link href='fullcalendar/core/main.css' rel='stylesheet' />
+    <link href='fullcalendar/daygrid/main.css' rel='stylesheet' />
+    <link href='fullcalendar/list/main.css' rel='stylesheet' />
+
+    <script src='fullcalendar/core/main.js'></script>
+    <script src='fullcalendar/daygrid/main.js'></script>
+    <script src='fullcalendar/interaction/main.js'></script>
+    <script src='fullcalendar/list/main.js'></script>
+    
+    <script type="text/javascript" src="js/jquery-3.4.1.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script type="text/javascript" src="dist/js/tabulator.min.js"></script>
+    
+</head>
+<body style="background-color:white;">
+
+<div id="dialog-form" title="Nueva Cita">
+  <p class="validateTips">Todos los campos son requeridos.</p>
+ 
+  <form>
+    <fieldset>
+      <table>      
+      	<tr>
+      		<td><label for="nombre">Nombre</label></td>
+      		<td><input type="text" name="nombre" id="nombre" class="text ui-widget-content ui-corner-all"></td>
+      	</tr>
+      	<tr>
+      		<td><label for="apellido1">Apellido</label></td>
+      		<td><input type="text" name="apellido1" id="apellido1"  class="text ui-widget-content ui-corner-all"></td>
+      	</tr>
+      	<tr>
+      		<td><label for="apellido2">Apellido Materno</label></td>
+      		<td><input type="text" name="apellido2" id="apellido2" class="text ui-widget-content ui-corner-all"></td>
+      	</tr>
+      	<tr>
+      		<td><label for="telefono">Telefono</label></td>
+      		<td><input type="text" name="telefono" id="telefono" class="text ui-widget-content ui-corner-all"></td>
+      	</tr>      	
+      	<tr>
+      		<td><label for="fecha">Fecha</label></td>
+      		<td>
+      			<input type="text" name="fecha" id="fecha" class="text ui-widget-content ui-corner-all">      			
+      		</td>
+      	</tr>
+      	</tr>
+      	<tr>
+      		
+      		<td>Horario</td>
+      		<td>
+      			<select name="horas" id="horas" class="text ui-widget-content ui-corner-all">
+`					<option></option>
+      				<option value="10">10am</option>
+      				<option value="11">11am</option>
+      				<option value="12">12pm</option>
+      				<option value="13">01pm</option>
+      				<option value="16">04pm</option>
+      				<option value="17">05pm</option>
+      				<option value="18">06pm</option>
+      				<option value="19">07pm</option>
+      				<option value="20">08pm</option>
+      			</select>    
+   				<select name="minutos" id="minutos" class="text ui-widget-content ui-corner-all">
+   					<option value="00">00</option>
+   					<option value="30">30</option>
+   				</select>      			  			
+     		</td>
+      	</tr>	
+      	</tr>
+      	      	<tr>
+      		<td><label for="duracion">Duracion</label></td>
+      		<td>
+      			<select name="duracion" id="duracion" class="text ui-widget-content ui-corner-all">
+      				<option value="30">30 min</option>
+      				<option value="60">1hr</option>
+      			</select>
+      		</td>
+      	</tr>   
+      	</tr>
+		<tr>
+      		<td><label for="tratamiento">Tratamiento</label></td>
+      		<td>
+      			<select name="tratamiento" id="tratamiento" class="text ui-widget-content ui-corner-all" >
+    				
+      			</select>
+      		</td>
+      	</tr>    
+  	      	      	   	      	      	
+      	<tr>
+      		<td colspan="2">
+      		<!-- Allow form submission with keyboard without duplicating the dialog button -->
+      		<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+      		<input type="hidden" name="id_paciente" id="id_paciente" value="0">
+      		<input type="hidden" name="id_cita" id="id_cita" value="0">
+      		</td>
+      	</tr>
+      </table>
+      
+    </fieldset>
+  </form>
+</div>
+ 
+ 
+<div id="paciente-table"></div>
+<br>
+<br>
+<div class="ui-widget">	
+	<td><label for="buscar">Buscar</label></td>
+	<td><input type="text" name="buscar" id="buscar" size="64" class="text ui-widget-content ui-corner-all"></td>
+</div>
+
+<br>
+<br>
+<!-- button id="create-paciente">Nueva Cita</button -->
+
+<div id="dialog-confirm" title="Empty the recycle bin?">
+  <p>
+  	<span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Elige accion a realizar para la cita seleccionada.  
+  </p>
+</div>
+
+<div id="calendar"></div>
+</body>
+<script>
+	
+	$(document).ready(function() {
+		var dialog, form, table, selectedPaciente, calendar;
+		var confirmacionColor = ['#4169E1', '#228B22'];		
+		
+		function addPaciente() {
+			var nombre = $("#nombre").val();
+			var apellido1 = $("#apellido1").val(); 
+			var apellido2 = $("#apellido2").val();
+			var telefono = $("#telefono").val();
+			var horas = $("#horas").val();
+			if(horas == null || horas == "") {
+			      // Most effect types need no options passed by default
+			      var options = {};
+				$( "#horas" ).show( "bounce", options, 600, function() {} );
+				return;
+			}
+			var minutos = $("#minutos").val();
+			var fecha = $("#fecha").val();
+			var duracion = $("#duracion").val();
+			var duracionMillis = duracion * (60*1000);
+			var calendarStart = fecha + "T" + horas + ":" + minutos;			
+			console.log("Start Date " + calendarStart);
+			var startDate = new Date(calendarStart).getTime();			
+			var endDate = new Date(startDate + duracionMillis).getTime();
+						
+			var id_paciente =  $("#id_paciente").val();
+			var id_cita =  $("#id_cita").val();			
+			var tratamiento = $( "#tratamiento" ).text();
+			
+			//debugger
+			var invokeMethod = "PUT";
+			// si estamos agregando, el metodo nos regresa el id en la respuesta
+			// sino usamos el id_cita para re=agendar			
+			if(id_cita != null && id_cita != "" && id_cita != "0") {
+				invokeMethod = "POST";				
+			}
+			
+			$.ajax({
+				type: invokeMethod,
+				url: '/cita',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify(
+						{
+							id: id_cita,
+							startDate: startDate, 
+	   					    endDate: endDate, 
+					        paciente: {
+					    		id: id_paciente,
+					    	 	nombre:nombre, 
+					    	 	apellido1: apellido1, 
+					    	 	apellido2: apellido2, 
+					    	 	telefono: telefono
+					     	},
+					     	tratamiento: {
+					     		id: 1,
+					     		tratamiento: "CONSULTA"					     	
+					     	}
+						}
+					  ),
+				success: function(data){
+						  var eventId = data['data'];
+						  //debugger
+						  if(id_cita != null && id_cita != "" && id_cita != "0") {
+							  //debugger
+							  var movedEvent = calendar.getEventById(id_cita);
+							  movedEvent.remove();
+							  eventId = id_cita;
+						  }
+						  
+					      calendar.addEvent({
+					          title: nombre + " " + apellido1 + " [" + telefono + "]",
+					          start: new Date(startDate) ,
+					          end: new Date(endDate),
+					          allDay: false,
+					          backgroundColor: confirmacionColor[0],
+					          id: eventId
+					       });
+						  
+
+						table.setData();				        
+				        clearData();
+				 },
+			    failure: function(errMsg) {alert(errMsg);}
+			});
+		}
+		
+		function clearData() {
+			
+			//debugger
+			$('#nombre').val('');
+			$('#nombre').prop("disabled", false);
+			
+			$('#apellido1').val('');
+			$('#apellido1').prop("disabled", false);
+			
+			$('#apellido2').val('');
+			$('#apellido2').prop("disabled", false);
+			
+			$('#telefono').val('');
+			$('#telefono').prop("disabled", false);	
+			
+			$('#fecha').val('');
+			$('#fecha').prop("disabled", false);
+			
+			$('#tratamiento').val('');
+			$('#tratamiento').prop("disabled", false);
+			
+			$( '#buscar' ).val('');
+			$('#id_paciente').val('');
+			$('#id_cita').val('');
+			
+			dialog.dialog('close');
+		}
+		
+		function prepararCambio(cita_id) {
+			//debugger
+			$.ajax({
+				type: "GET",
+				url: '/cita/' + cita_id,
+				contentType: 'application/json',
+				dataType: 'json',				
+				success: function(data){
+					//debugger
+					$('#id_paciente').val(data['paciente']['id']);
+					$('#id_cita').val(data['id']);
+					$("#nombre").val(data['paciente']['nombre']);
+					$("#nombre").prop("disabled", true);
+					
+					$("#apellido1").val(data['paciente']['apellido1']);
+					$("#apellido1").prop("disabled", true);
+					
+					$("#apellido2").val(data['paciente']['apellido2']);
+					$("#apellido2").prop("disabled", true);
+					
+					$("#telefono").val(data['paciente']['telefono']);
+					$("#telefono").prop("disabled", true);					
+					
+					var startDate = new Date(data['startDate']);
+					var year = startDate.getFullYear();
+					var month = startDate.getMonth();
+					if(month < 10) {
+						month = month+1;
+						month = "0" + month;
+					}
+					var day = startDate.getDate();
+					if(day < 10) {
+						day = "0" + day;
+					}
+					var fecha = year + '-' + month + '-' + day;
+					$("#fecha").val(fecha);
+					
+					var hours = startDate.getHours();
+					var mins = startDate.getMinutes();
+					if(mins == 0 || mins == "0") {
+						mins = "00";
+					}
+					$("#horas").val(hours);
+					$("#minutos").val(mins);
+										
+					var tratamiento = data['tratamiento']['tratamiento'];
+					var duracion = data['tratamiento']['duracion'];								
+					
+					$("#duracion").val(duracion);
+					$("#tratamiento").text(tratamiento);
+					$("#tratamiento").prop("disabled", true);
+					
+				},
+			    failure: function(errMsg) {alert(errMsg);}
+			});			
+		}
+		
+		function loadData() {			
+			$.ajax({
+				type: "GET",
+				url: '/tratamiento',
+				contentType: 'application/json',
+				dataType: 'json',				
+				success: function(data){
+					$( "#tratamiento" ).empty();
+					$.each(data, function(key,value) {						
+						$( "#tratamiento" ).append($("<option></option>").attr("value",value["duracion"]).text(value["tratamiento"]));
+					})
+				},
+			    failure: function(errMsg) {alert(errMsg);}
+			});
+			var id_paciente = $("#id_paciente").val();
+			if(id_paciente != null) {
+				$.ajax({
+					type: "GET",
+					url: '/paciente/' + id_paciente,
+					contentType: 'application/json',
+					dataType: 'json',				
+					success: function(data){
+						////debugger
+						$("#nombre").val(data['nombre']);
+						$("#apellido1").val(data['apellido1']);
+						$("#apellido2").val(data['apellido2']);
+						$("#telefono").val(data['telefono']);
+					},
+				    failure: function(errMsg) {alert(errMsg);}
+				});
+			}
+		}
+		
+		function agregarEvento(arg) {
+			dialog.dialog( "open" );
+			////debugger
+			$("#fecha").val(arg.startStr);
+
+			
+			calendar.unselect();
+		}		
+		
+
+		
+		table = new Tabulator("#paciente-table", {
+		    //width:"800",
+		    layout:"fitColumns",
+		    ajaxURL:"/paciente",
+		    //ajaxProgressiveLoad:"scroll",
+		    //data: mydata,
+		    paginationSize:20,
+		    placeholder:"No Data Set",
+		    rowClick: function(e, row) { 
+		    	////debugger
+		    	var rowData = row.getData();
+		    	selectedPaciente = rowData['id'];		    	
+		    	dialog.dialog('open');
+		    	
+		    },
+		    columns:[
+		        {title:"id", field:"id", sorter:"number", width:50},
+		        {title:"Nombre", field:"nombre", sorter:"string",width:200},
+		        {title:"Apellido1", field:"apellido1", sorter:"string",width:200},
+		        {title:"Apellido2", field:"apellido2", hozAlign:"center", width:200	},
+		        {title:"Telefono", field:"telefono", hozAlign:"center", width:200	},
+		    ],
+		});			
+		
+
+
+	      
+
+		
+	    dialog = $( "#dialog-form" ).dialog({
+	        autoOpen: false,
+	        height: 500,
+	        width: 550,
+	        modal: true,
+	        open: function(event, ui) {
+	        	loadData();
+	        },
+	        buttons: {
+	          "Agregar": addPaciente,
+	          Cancel: function() {
+	            dialog.dialog( "close" );
+	          }
+	        },
+	        close: function() {
+	          form[ 0 ].reset();
+	          clearData();
+	          //allFields.removeClass( "ui-state-error" );
+	        }
+	      });
+	   
+	      form = dialog.find( "form" ).on( "submit", function( event ) {
+	        event.preventDefault();
+	        addPaciente();
+	      });
+	   	      		
+	
+	      var calendarE1 = document.getElementById('calendar');
+	      
+	      calendar = new FullCalendar.Calendar(calendarE1, {
+	    	  plugins: [ 'interaction', 'dayGrid' ],
+	    	  selectable: true,
+	          select: agregarEvento,
+	          eventOverlap: true,
+	          eventClick: function(eventClickInfo) {
+	        	  var event = eventClickInfo['event'];
+	        	  var id = event['id'];
+	        	  $( "#dialog-confirm" ).dialog("open");
+	        	  prepararCambio(event['id']);
+	          }
+	          });
+	      
+	      calendar.render();		      
+	      
+	      $( "#buscar").autocomplete({
+	          source: "busqueda",
+	    	  minLength: 6,
+	          select: function( event, ui ) {
+	        	  console.log("busqueda="+ ui.item.id);
+	              $("#id_paciente").val(ui.item.id);
+	            }	    	  
+	      });
+	      
+			
+			$("#fecha").datepicker({
+				dateFormat: "yy-mm-dd"
+			});	      
+	      
+	      
+	      $.ajax({
+				type: "GET",
+				url: '/cita',
+				contentType: 'application/json',
+				dataType: 'json',				
+				success: function(data){					
+					////debugger
+					$.each(data, function(key,value) {
+						console.log("agregando cita [" + value["paciente"]["nombre"] + ' - ' + value["paciente"]["apellido1"] + ' ==> ' + new Date(value["startDate"]) + "]")
+						//debugger;
+						var bgColor = confirmacionColor[value['confirmacion']];
+						////debugger
+			            calendar.addEvent({
+				        	title: value["paciente"]["nombre"] + " " + value["paciente"]["apellido1"] + " [" + value["paciente"]["telefono"] + "]",
+				            start: new Date(value["startDate"]) ,
+				            end: new Date(value["endDate"]),
+				            allDay: false,
+				            backgroundColor: bgColor,
+				            id: value["id"]
+				        });						
+					});
+					
+					
+				},
+			    failure: function(errMsg) {alert(errMsg);}
+			});
+	      	      
+	      $( "#dialog-confirm" ).dialog({
+	          resizable: false,
+	          autoOpen: false,
+	          show: {
+	            effect: "blind",
+	            duration: 150	
+	          },	          
+	          height: "auto",
+	          width: 400,
+	          modal: true,
+	          buttons: {
+	        	"Modificar Cita": function() {
+	        		$(this).dialog('close');
+	        		dialog.dialog('open');
+	        	},
+	            "Confirmar Cita": function() {   	            		            	
+	            	var id_cita = $('#id_cita').val();
+	            	debugger;
+	    			$.ajax({
+	    				type: "POST",
+	    				url: '/cita/' + id_cita ,
+	    				contentType: 'application/json',
+	    				dataType: 'json',				
+	    				success: function(data){
+	    					//debugger	    					
+	    					var event = calendar.getEventById(id_cita);
+	    					event.setProp('backgroundColor', confirmacionColor[1]);
+	    					//alert('Cita confirmada');
+	    				},
+	    			    failure: function(errMsg) {alert(errMsg);}
+	    			});
+	    			clearData();
+	    			$( this ).dialog( "close" );
+	            },
+	            "Borrar Cita": function() {
+	            	$( this ).dialog( "close" );
+	            	var id_cita = $('#id_cita').val();
+	    			$.ajax({
+	    				type: "DELETE",
+	    				url: '/cita/' + id_cita ,
+	    				contentType: 'application/json',
+	    				dataType: 'json',				
+	    				success: function(data){
+	    					//debugger	    					
+	    					var event = calendar.getEventById(id_cita);
+	    					event.remove();
+	    					alert('cita borrada');
+	    				},
+	    			    failure: function(errMsg) {alert(errMsg);}
+	    			});
+	            },
+	            Cancel: function() {
+	              $( this ).dialog( "close" );
+	              clearData();
+	              dialog.dialog('close');
+	            }
+	          }
+	        });
+	      
+	      clearData();
+	});
+</script>
+</html> 
