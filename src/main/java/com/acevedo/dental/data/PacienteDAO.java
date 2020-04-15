@@ -16,13 +16,13 @@ public interface PacienteDAO {
 	public static final String PACIENTE_BUSQUEDA_SQL = "INSERT INTO PACIENTE_BUSQUEDA(NOMBRE_COMPLETO,ID_PACIENTE) VALUES(?, ?)";
 	public static final String FIND_PACIENTES_SQL = "SELECT * FROM PACIENTE";
 	public static final String FIND_TRATAMIENTOS_SQL = "SELECT * FROM TRATAMIENTOS";
-	public static final String BUSCAR_PACIENTE_SQL = "SELECT * FROM paciente_busqueda WHERE MATCH(nombre_completo) AGAINST (?);";
+	public static final String BUSCAR_PACIENTE_SQL = "SELECT * FROM PACIENTE_BUSQUEDA WHERE MATCH(nombre_completo) AGAINST (?);";
 	public static final String AGREGA_CITA_SQL = "INSERT INTO CITA(ID_PACIENTE, ID_TRATAMIENTO, STARTDATE, ENDDATE) VALUES (?,?,?,?)";
 	public static final String FIND_CITAS_SQL = "SELECT c.id, c.id_paciente, c.id_tratamiento, c.startDate, c.EndDate, c.confirmacion, p.nombre, p.apellido1, p.apellido2, p.telefono, t.tratamiento, t.duracion, t.costo FROM CITA c, PACIENTE p, TRATAMIENTOS t WHERE c.id_paciente = p.id AND c.id_tratamiento = t.id";
 	public static final String FIND_CITA_BY_ID_SQL = FIND_CITAS_SQL + " AND c.id = ?";
-	public static final String CAMBIAR_CITA = "UPDATE cita SET startDate = ?, endDate = ?, confirmacion = 0 WHERE id = ?";
-	public static final String CONFIRMAR_CITA = "UPDATE cita SET confirmacion = ? WHERE id = ?";
-	public static final String CANCELAR_CITA = "DELETE FROM cita WHERE id = ?";
+	public static final String CAMBIAR_CITA = "UPDATE CITA SET startDate = ?, endDate = ?, confirmacion = 0 WHERE id = ?";
+	public static final String CONFIRMAR_CITA = "UPDATE CITA SET confirmacion = ? WHERE id = ?";
+	public static final String CANCELAR_CITA = "DELETE FROM CITA WHERE id = ?";
 
 	public int agregarPaciente(Paciente p);
 	public int agregaCita(Paciente p, Tratamiento t, long startDate, long endDate);
