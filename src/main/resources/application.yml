@@ -1,0 +1,38 @@
+logging:
+  level:
+    .: error
+    root: info
+    org.springframework: INFO
+    com.acevedo: DEBUG
+
+---
+spring:
+   profiles: dev
+   application:
+        name: dental
+   datasource:
+        driverClassName: org.mariadb.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/paciente
+        username: root
+        password: motive
+        driver-class-name: org.mariadb.jdbc.Driver
+        initialization-mode: always
+   jpa:
+        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect        
+server:
+    port: 8080
+    
+---
+spring:
+   profiles: aws
+   application:
+        name: dental
+   datasource:
+        driverClassName: org.mariadb.jdbc.Driver
+        url: jdbc:mysql://aws:3306/paciente
+        username: dental
+        password: dentaldb
+        driver-class-name: org.mariadb.jdbc.Driver
+        initialization-mode: never        
+server:
+    port: 5000

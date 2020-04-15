@@ -87,8 +87,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<spring.profiles.active>dev</spring.profiles.active>
-				<maven.test.skip>true</maven.test.skip>
+				<spring.profiles.active>dev</spring.profiles.active>				
 			</properties>
 		</profile>
 		<profile>
