@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8" />
+<head>
+</head>
+<body>
+<div th:fragment="paciente-table-fragment">
+    <div id="paciente-table"></div>
+	<script>
+		var table;
+		
+		
+		$(document).ready(function() {
+		
+			table = new Tabulator("#paciente-table", {
+			    //width:"800",
+			    layout:"fitColumns",
+			    ajaxURL:"/paciente",
+			    //ajaxProgressiveLoad:"scroll",
+			    //data: mydata,
+			    paginationSize:20,
+			    placeholder:"No Data Set",
+			    rowClick: function(e, row) { 
+			    	////debugger
+			    	var rowData = row.getData();
+			    	selectedPaciente = rowData['id'];		    	
+			    	//dialog.dialog('open');
+			    	
+			    },
+			    columns:[
+			        {title:"id", field:"id", sorter:"number", width:50},
+			        {title:"Nombre", field:"nombre", sorter:"string",width:200},
+			        {title:"Apellido1", field:"apellido1", sorter:"string",width:200},
+			        {title:"Apellido2", field:"apellido2", hozAlign:"center", width:200	},
+			        {title:"Telefono", field:"telefono", hozAlign:"center", width:200	},
+			    ],
+			});	
+		});
+	</script>
+</div>	    
+</body>
+
+</html>

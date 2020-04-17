@@ -23,7 +23,7 @@
     
 </head>
 <body style="background-color:white;">
-
+<div th:fragment="main-fragment">
 <div id="dialog-form" title="Nueva Cita">
   <p class="validateTips">Todos los campos son requeridos.</p>
  
@@ -110,7 +110,6 @@
 </div>
  
  
-<div id="paciente-table"></div>
 <br>
 <br>
 <div class="ui-widget">	
@@ -129,11 +128,11 @@
 </div>
 
 <div id="calendar"></div>
-</body>
+
 <script>
 	
 	$(document).ready(function() {
-		var dialog, form, table, selectedPaciente, calendar;
+		var dialog, form, selectedPaciente, calendar;
 		var confirmacionColor = ['#4169E1', '#228B22'];		
 		
 		function addPaciente() {
@@ -211,8 +210,7 @@
 					          id: eventId
 					       });
 						  
-
-						table.setData();				        
+										        
 				        clearData();
 				 },
 			    failure: function(errMsg) {alert(errMsg);}
@@ -346,34 +344,6 @@
 			calendar.unselect();
 		}		
 		
-
-		
-		table = new Tabulator("#paciente-table", {
-		    //width:"800",
-		    layout:"fitColumns",
-		    ajaxURL:"/paciente",
-		    //ajaxProgressiveLoad:"scroll",
-		    //data: mydata,
-		    paginationSize:20,
-		    placeholder:"No Data Set",
-		    rowClick: function(e, row) { 
-		    	////debugger
-		    	var rowData = row.getData();
-		    	selectedPaciente = rowData['id'];		    	
-		    	dialog.dialog('open');
-		    	
-		    },
-		    columns:[
-		        {title:"id", field:"id", sorter:"number", width:50},
-		        {title:"Nombre", field:"nombre", sorter:"string",width:200},
-		        {title:"Apellido1", field:"apellido1", sorter:"string",width:200},
-		        {title:"Apellido2", field:"apellido2", hozAlign:"center", width:200	},
-		        {title:"Telefono", field:"telefono", hozAlign:"center", width:200	},
-		    ],
-		});			
-		
-
-
 	      
 
 		
@@ -525,4 +495,6 @@
 	      clearData();
 	});
 </script>
+</div>
+</body>
 </html> 
