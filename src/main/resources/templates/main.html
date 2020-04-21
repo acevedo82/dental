@@ -101,6 +101,7 @@
       		<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
       		<input type="hidden" name="id_paciente" id="id_paciente" value="0">
       		<input type="hidden" name="id_cita" id="id_cita" value="0">
+      		<input type="hidden" name="id_tratamiento" id="id_tratamiento" value="0">
       		</td>
       	</tr>
       </table>
@@ -159,6 +160,7 @@
 			var id_paciente =  $("#id_paciente").val();
 			var id_cita =  $("#id_cita").val();			
 			var tratamiento = $( "#tratamiento" ).text();
+			var id_tratamiento_option = $( "#tratamiento" ).val();
 			
 			//debugger
 			var invokeMethod = "PUT";
@@ -186,8 +188,7 @@
 					    	 	telefono: telefono
 					     	},
 					     	tratamiento: {
-					     		id: 1,
-					     		tratamiento: "CONSULTA"					     	
+					     		id: id_tratamiento_option			     	
 					     	}
 						}
 					  ),
@@ -236,6 +237,7 @@
 			$('#fecha').prop("disabled", false);
 			
 			$('#tratamiento').val('');
+			$('#id_tratamiento').val('');
 			$('#tratamiento').prop("disabled", false);
 			
 			$( '#buscar' ).val('');
@@ -290,11 +292,12 @@
 					$("#horas").val(hours);
 					$("#minutos").val(mins);
 										
-					var tratamiento = data['tratamiento']['tratamiento'];
+					var tratamiento = data['tratamiento']['id'];					
 					var duracion = data['tratamiento']['duracion'];								
 					
 					$("#duracion").val(duracion);
-					$("#tratamiento").text(tratamiento);
+					$("#tratamiento").val(tratamiento);
+					$('#id_tratamiento').val(tratamiento);
 					$("#tratamiento").prop("disabled", true);
 					
 				},
@@ -311,11 +314,14 @@
 				success: function(data){
 					$( "#tratamiento" ).empty();
 					$.each(data, function(key,value) {						
-						$( "#tratamiento" ).append($("<option></option>").attr("value",value["duracion"]).text(value["tratamiento"]));
-					})
+						$( "#tratamiento" ).append($("<option></option>").attr("value",value["id"]).text(value["tratamiento"]));
+					});
+					var id_tratamiento = $('#id_tratamiento').val();
+					$('#tratamiento').val(id_tratamiento);
 				},
 			    failure: function(errMsg) {alert(errMsg);}
 			});
+			
 			var id_paciente = $("#id_paciente").val();
 			if(id_paciente != null) {
 				$.ajax({

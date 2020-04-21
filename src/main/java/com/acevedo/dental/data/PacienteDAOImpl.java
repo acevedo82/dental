@@ -82,6 +82,7 @@ public class PacienteDAOImpl implements PacienteDAO {
 			p.setApellido1(rs.getString("APELLIDO1"));
 			p.setApellido2(rs.getString("APELLIDO2"));
 			p.setTelefono(rs.getString("TELEFONO"));
+			p.setEspera(rs.getString("ESPERA"));
 			return p;
 		}
 		
@@ -274,6 +275,18 @@ public class PacienteDAOImpl implements PacienteDAO {
 	}
 
 
+
+
+	@Override
+	public List<Paciente> findPacientesEnListaDeEspera() {
+		// Lista de espera
+		
+		List<Paciente> listaDeEspera = this.getJdbcTemplate().query(LISTA_DE_ESPERA, new PacienteRowMapper());
+		return listaDeEspera;
+	}
+
+
+	
 	
 	
 	

@@ -47,6 +47,13 @@ public class MainRestController {
 	public @ResponseBody String obtenerPacientes() throws Exception {
 		List<Paciente> p = this.dao.findPacientes();		 		
 		return mapper.writeValueAsString(p);
+	}
+	
+	
+	@RequestMapping(value = "/lista-de-espera", method = RequestMethod.GET)
+	public @ResponseBody String listaDeEspera() throws Exception {
+		List<Paciente> p = this.dao.findPacientesEnListaDeEspera();		 		
+		return mapper.writeValueAsString(p);
 	}	
 	
 	@RequestMapping( value = "/paciente", method = RequestMethod.POST, consumes = "application/json", produces = "application/json" )

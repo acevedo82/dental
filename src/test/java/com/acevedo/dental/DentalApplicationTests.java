@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +44,11 @@ class DentalApplicationTests {
 		assertNotNull(dao.findCitas());
 	}
 	
+	@Test
+	void listaDeEspera() {
+		List<Paciente> p =this.dao.findPacientesEnListaDeEspera();
+		assertNotNull(p);
+	}
 	
 	/**
 	 * 
