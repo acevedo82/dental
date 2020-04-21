@@ -105,7 +105,7 @@
       		</td>
       	</tr>
       </table>
-      
+       
     </fieldset>
   </form>
 </div>
@@ -385,6 +385,7 @@
 	      calendar = new FullCalendar.Calendar(calendarE1, {
 	    	  plugins: [ 'interaction', 'dayGrid' ],
 	    	  selectable: true,
+	    	  height: 650,	    	  
 	          select: agregarEvento,
 	          eventOverlap: true,
 	          eventClick: function(eventClickInfo) {
