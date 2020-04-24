@@ -1,69 +1,132 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
-   
-    <link href="js/jquery-ui-1.12.1.custom/jquery-ui.css" rel="stylesheet" type="text/css">
-	<link href="js/jquery-ui-1.12.1.custom/jquery-ui.theme.css" rel="stylesheet" type="text/css">		
-	<link href="dist/css/tabulator.min.css" rel="stylesheet" type="text/css">
-		
-	<link href='fullcalendar/core/main.css' rel='stylesheet' />
-    <link href='fullcalendar/daygrid/main.css' rel='stylesheet' />
-    <link href='fullcalendar/list/main.css' rel='stylesheet' />
-
-    <script src='fullcalendar/core/main.js'></script>
-    <script src='fullcalendar/daygrid/main.js'></script>
-    <script src='fullcalendar/interaction/main.js'></script>
-    <script src='fullcalendar/list/main.js'></script>
-    
-    <script type="text/javascript" src="js/jquery-3.4.1.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>    
-    <script type="text/javascript" src="dist/js/tabulator.min.js"></script>
-
-  <style>
-
-  </style>
+<head th:replace="fragments/header :: headerfiles">
     
 </head>
 <body>
+<table border="1">
+	<tr>
+		<td width="15%" valign="top">
+			<div id="menu">
+				  <h3>Citas</h3>
+				  <div>
+				    <p>	
+				    	<ul>			    	
+				    		<li><a href="/agregarCita">Agregar Cita</a></li>				    		
+				    	</ul>
+				    </p>
+				  </div>			
+				  <h3>Paciente</h3>
+				  <div>
+				    <p>
+				    	<!-- button id="buttonPacientes" name="buttonPacientes" class="ui-button ui-widget ui-corner-all">Pacientes</button -->
+				    	<button id="buttonListaEspera" name="buttonListaEspera" class="ui-button ui-widget ui-corner-all">Lista de Espera</button>				    	
+				    </p>
+				  </div>
+				  <h3>Reportes</h3>
+				  <div>
+				    <p>
+				    	<button id="buttonTratamientos" name="buttonTratamientos" class="ui-button ui-widget ui-corner-all">Tratamientos</button>				    	
+				    </p>
+				  </div>
+			</div>
+		</td>
+		<td><div id="calendar"></div></td>
+	</tr>
+</table>
 
-
-
-<div th:replace="fragments/header :: header"></div>
-
-<div id="tabs">
-  <ul>
-    <li><a href="#tabs-1">Calendario</a></li>
-    <li><a href="#tabs-2">Lista de Espera</a></li>
-    <li><a href="#tabs-3">Administracion</a></li>
-  </ul>
-  <div id="tabs-1">
-    <h2>Calendario</h2>
-    <p><div th:replace="main :: main-fragment"></div></p>
-  </div>
-  <div id="tabs-2">
-    <h2>Lista de Espera</h2>
-    <p>
-    	<div th:replace="espera :: paciente-table-fragment"></div>
-    </p>
-  </div>
-  <div id="tabs-3">
-    <h2>Content heading 3</h2>
-    <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-    <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
-  </div>
-</div>
-
-<div th:replace="fragments/footer :: footer"></div>
 
 </body>
 <script>
-	$(document).ready(function() { 
-	    $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
-	    $( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
-		
+
+$(document).ready(function() {
+	$('#menu').accordion();
+	
+	var confirmacionColor = ['#4169E1', '#228B22'];
+	
+	// Obtener todas las citas
+	// llamada HTTP1.1 /GET a /cita
+    $.ajax({
+		type: "GET",
+		url: '/cita',
+		contentType: 'application/json',
+		dataType: 'json',				
+		success: function(data){					
+			////debugger
+			$.each(data, function(key,value) {
+				console.log("agregando cita [" + value["paciente"]["nombre"] + ' - ' + value["paciente"]["apellido1"] + ' ==> ' + new Date(value["startDate"]) + "]")
+				//debugger;
+				var bgColor = confirmacionColor[value['confirmacion']];
+				////debugger
+	            calendar.addEvent({
+		        	title: value["paciente"]["nombre"] + " " + value["paciente"]["apellido1"] + " [" + value["paciente"]["telefono"] + "]",
+		            start: new Date(value["startDate"]) ,
+		            end: new Date(value["endDate"]),
+		            allDay: false,
+		            backgroundColor: bgColor,
+		            id: value["id"]
+		        });						
+			});
+			
+			
+		},
+	    failure: function(errMsg) {alert(errMsg);}
 	});
+	
+	
+}); 
+	
+	
+
+var calendarE1 = document.getElementById('calendar');
+
+calendar = new FullCalendar.Calendar(calendarE1, {
+	  header: { center: 'dayGridMonth,timeGridWeek,timeGridDay' },
+	  plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+	  defaultView: 'timeGridWeek',
+	  selectable: true,
+	  minTime: "09:00",
+	  maxTime: "22:00",
+	  hiddenDays: [ 0 ],
+	  height: 800,	    	  
+    select: agregarEvento,
+    eventOverlap: true,
+    eventClick: function(eventClickInfo) {      
+  	  var event = eventClickInfo['event'];
+  	  var id = event['id'];
+	  location.href = "/cambiarCita?id_cita=" + id;
+    }
+    });
+
+calendar.render();	
+
+function agregarEvento(event) {
+	console.log("About to add calendar event at " + event.startStr);
+	debugger;	
+	var year = event.start.getFullYear();
+	var month = event.start.getMonth();
+	if(month < 10) {
+		month = month+1;
+		month = "0" + month;
+	}
+	var day = event.start.getDate();
+	if(day < 10) {
+		day = "0" + day;
+	}
+	var fecha = year + '-' + month + '-' + day;
+	
+	var hours = event.start.getHours();
+	if(hours < 10) {
+		hours = "0" + hours;
+	}
+	var mins = event.start.getMinutes();
+	if(mins == 0 || mins == "0") {
+		mins = "00";
+	}
+	
+	location.href = "/agregarCita?startStr=" + fecha + "&horas=" + hours + "&minutos=" + mins;	
+	
+}
+
 </script>
 </html>

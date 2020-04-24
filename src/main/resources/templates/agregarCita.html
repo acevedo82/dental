@@ -5,12 +5,18 @@
 </head>
 <body>
 
+<div class="ui-widget">
+	<table style="margin-left:auto;margin-right:auto;">
+		<tr>	
+			<td>Buscar Paciente</td>
+			<td><input type="text" name="buscar" id="buscar" size="64" class="text ui-widget-content ui-corner-all"></td>
+		</tr>
+	</table>
+</div>
 
-<div id="dialog-form" title="Cambiar Cita">  
-      <table style="margin-left:auto;margin-right:auto;">
-      	<tr>
-      		<td colspan="2"><h2>Cambiar Cita</h2></td>
-      	</tr>      
+<div id="dialog-form" title="Nueva Cita">  
+ 
+      <table style="margin-left:auto;margin-right:auto;">      
       	<tr>
       		<td><label for="nombre">Nombre</label></td>
       		<td><input type="text" name="nombre" id="nombre" class="text ui-widget-content ui-corner-all"></td>
@@ -40,6 +46,7 @@
       		<td>
       			<select name="horas" id="horas" class="text ui-widget-content ui-corner-all">
 `					<option></option>
+					<option value="09">09am</option>
       				<option value="10">10am</option>
       				<option value="11">11am</option>
       				<option value="12">12pm</option>
@@ -49,6 +56,7 @@
       				<option value="18">06pm</option>
       				<option value="19">07pm</option>
       				<option value="20">08pm</option>
+      				<option value="21">09pm</option>
       			</select>    
    				<select name="minutos" id="minutos" class="text ui-widget-content ui-corner-all">
    					<option value="00">00</option>
@@ -79,7 +87,7 @@
       	<tr>
       		<td colspan="2">
       		<!-- Allow form submission with keyboard without duplicating the dialog button -->
-      		<button id="buttonAgendar">Regendar Cita</button>
+      		<button id="buttonAgendar">Agendar</button>
       		<button id="buttonCancelar">Cancelar</button>
       		<input type="hidden" name="id_paciente" id="id_paciente" value="0">
       		<input type="hidden" name="id_cita" id="id_cita" value="0">
@@ -93,7 +101,7 @@
 <div id="dialog-message" title="Download complete">
   <p>
     <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-    Cita Cambiada!
+    Cita Agregada!
   </p>
   <p>
     Success.
@@ -107,19 +115,27 @@
 /*<![CDATA[*/
 
 
-var cita_id = /*[[${param.id_cita}]]*/;
+var startStr = /*[[${param.startStr}]]*/;
+var hours = /*[[${param.horas}]]*/;
+var mins = /*[[${param.minutos}]]*/;
 
 
 /*]]>*/
 
-
 $(document).ready(function() {
-	
-	
 	
 	$("#fecha").datepicker({
 		dateFormat: "yy-mm-dd"
 	});
+	
+	$("#fecha").val(startStr);
+	//$('#fecha').prop("disabled", true);
+	
+	$("#horas").val(hours);
+	//$('#horas').prop("disabled", true);
+	
+	$("#minutos").val(mins);
+	//$('#minutos').prop("disabled", true);
 	
 	$('#buttonAgendar').click(function()  {
 		addPaciente();
@@ -146,7 +162,7 @@ $(document).ready(function() {
             location.href="/";
           }
         }
-      });	
+      });
 	
 	function addPaciente() {
 		var nombre = $("#nombre").val();
@@ -204,8 +220,9 @@ $(document).ready(function() {
 				     	}
 					}
 				  ),
-			success: function(data){				
-				$( "#dialog-message" ).dialog( "open" );				
+			success: function(data){
+				//debugger;
+				$( "#dialog-message" ).dialog( "open" );								
 			 },
 		    failure: function(errMsg) {alert(errMsg);}
 		});
@@ -235,7 +252,9 @@ $(document).ready(function() {
 		
 		$( '#buscar' ).val('');
 		$('#id_paciente').val('');
-		$('#id_cita').val('');		
+		$('#id_cita').val('');
+		
+		dialog.dialog('close');
 	}
 	
 	function loadTratamiento() {			
@@ -256,69 +275,38 @@ $(document).ready(function() {
 		});
 	}
 	
-	function prepararCambio(cita_id) {
-		//debugger
-		$.ajax({
-			type: "GET",
-			url: '/cita/' + cita_id,
-			contentType: 'application/json',
-			dataType: 'json',				
-			success: function(data){
-				//debugger
-				$('#id_paciente').val(data['paciente']['id']);
-				$('#id_cita').val(data['id']);
-				$("#nombre").val(data['paciente']['nombre']);
-				$("#nombre").prop("disabled", true);
-				
-				$("#apellido1").val(data['paciente']['apellido1']);
-				$("#apellido1").prop("disabled", true);
-				
-				$("#apellido2").val(data['paciente']['apellido2']);
-				$("#apellido2").prop("disabled", true);
-				
-				$("#telefono").val(data['paciente']['telefono']);
-				$("#telefono").prop("disabled", true);					
-				
-				var startDate = new Date(data['startDate']);
-				var endDate = new Date(data['endDate']);
-				var duracion = (endDate - startDate)/(60*1000);				
-				var year = startDate.getFullYear();
-				var month = startDate.getMonth();
-				if(month < 10) {
-					month = month+1;
-					month = "0" + month;
-				}
-				var day = startDate.getDate();
-				if(day < 10) {
-					day = "0" + day;
-				}
-				var fecha = year + '-' + month + '-' + day;
-				$("#fecha").val(fecha);
-				
-				var hours = startDate.getHours();
-				var mins = startDate.getMinutes();
-				if(mins == 0 || mins == "0") {
-					mins = "00";
-				}
-				$("#horas").val(hours);
-				$("#minutos").val(mins);
-									
-				var tratamiento = data['tratamiento']['id'];					
-												
-				
-				$("#duracion").val(duracion);
-				$("#tratamiento").val(tratamiento);
-				$('#id_tratamiento').val(tratamiento);
-				$("#tratamiento").prop("disabled", true);
-				
-			},
-		    failure: function(errMsg) {alert(errMsg);}
-		});			
-	}
+	function loadPaciente() {
+		
+		var id_paciente = $("#id_paciente").val();
+		if(id_paciente != null) {
+			$.ajax({
+				type: "GET",
+				url: '/paciente/' + id_paciente,
+				contentType: 'application/json',
+				dataType: 'json',				
+				success: function(data){
+					////debugger
+					$("#nombre").val(data['nombre']);
+					$("#apellido1").val(data['apellido1']);
+					$("#apellido2").val(data['apellido2']);
+					$("#telefono").val(data['telefono']);
+				},
+			    failure: function(errMsg) {alert(errMsg);}
+			});
+		}
+	}	
 	
-	//clearData();
+    $( "#buscar").autocomplete({
+        source: "busqueda",
+  	  minLength: 6,
+        select: function( event, ui ) {
+      	  console.log("busqueda="+ ui.item.id);
+            $("#id_paciente").val(ui.item.id);
+            loadPaciente();
+          }
+    });
+	
     loadTratamiento();
-    prepararCambio(cita_id[0]);
 });
 
 	
