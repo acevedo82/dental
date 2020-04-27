@@ -22,6 +22,7 @@ import com.acevedo.dental.DentalConstants;
 import com.acevedo.dental.data.PacienteDAO;
 import com.acevedo.dental.model.Cita;
 import com.acevedo.dental.model.Item;
+import com.acevedo.dental.model.ListaEspera;
 import com.acevedo.dental.model.Paciente;
 import com.acevedo.dental.model.Respuesta;
 import com.acevedo.dental.model.Tratamiento;
@@ -50,10 +51,30 @@ public class MainRestController {
 	}
 	
 	
-	@RequestMapping(value = "/lista-de-espera", method = RequestMethod.GET)
+	@RequestMapping(value = "/listaEspera", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody String listaDeEspera() throws Exception {
-		List<Paciente> p = this.dao.findPacientesEnListaDeEspera();		 		
+		List<ListaEspera> p = this.dao.findPacientesEnListaDeEspera();		 		
 		return mapper.writeValueAsString(p);
+	}	
+	
+	@RequestMapping(value = "/listaEspera", method = RequestMethod.PUT, produces = "application/json")
+	public Respuesta listaDeEspera(@RequestBody ListaEspera espera) throws Exception {
+		logger.debug("Agregando lista de espera al paciente " + espera.getPaciente().getNombre());
+		Respuesta r = new Respuesta();
+		int affected = 0;
+		affected = this.dao.agregarListaDeEspera(espera);
+		r.setCodigo(affected);
+		r.setData(DentalConstants.SUCCESS);
+		r.setMensaje(DentalConstants.OK);
+		return r;
+	}	
+	
+	@RequestMapping(value = "/listaEspera/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ListaEspera listaDeEspera(@PathVariable Integer id) throws Exception {
+		logger.debug("Buscando lista de espera " + id);
+		Respuesta r = new Respuesta();
+		ListaEspera espera = this.dao.findListaEspera(id);
+		return espera;
 	}	
 	
 	@RequestMapping( value = "/paciente", method = RequestMethod.POST, consumes = "application/json", produces = "application/json" )
@@ -144,7 +165,7 @@ public class MainRestController {
 	}	
 	
 	@RequestMapping( value = "/cita", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Respuesta> agregarCita(@RequestBody Cita c) {
+	public ResponseEntity<Respuesta> agregarCita(@RequestBody Cita c, @RequestParam(name = "id_espera", required = false) Integer id_espera) {
 		Respuesta r = new Respuesta();
 		Paciente p = c.getPaciente();
 		Tratamiento t = c.getTratamiento();
@@ -159,6 +180,10 @@ public class MainRestController {
 			logger.debug("Vamos a agregar cita nueva");
 			int citaAgregada = this.dao.agregaCita(p, t, startDate, endDate);
 			logger.debug("Cita agregada " + citaAgregada);
+			if(citaAgregada > 0) {
+				logger.debug("Lista de espera asociada borrada id=" + id_espera);
+				this.dao.borrarListaEspera(id_espera);
+			}
 			r.setMensaje(DentalConstants.SUCCESS);
 			r.setData(new StringBuffer().append(citaAgregada).toString());
 			return ResponseEntity.ok().body(r);

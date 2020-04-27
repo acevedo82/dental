@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: headerfiles">
-    
+<head th:replace="fragments/header :: headerfiles">   
 </head>
 <body>
 
@@ -40,15 +39,19 @@
       		<td>
       			<select name="horas" id="horas" class="text ui-widget-content ui-corner-all">
 `					<option></option>
+					<option value="09">09am</option>
       				<option value="10">10am</option>
       				<option value="11">11am</option>
       				<option value="12">12pm</option>
       				<option value="13">01pm</option>
+      				<option value="14">02pm</option>
+      				<option value="15">03pm</option>      				
       				<option value="16">04pm</option>
       				<option value="17">05pm</option>
       				<option value="18">06pm</option>
       				<option value="19">07pm</option>
       				<option value="20">08pm</option>
+      				<option value="21">09pm</option>
       			</select>    
    				<select name="minutos" id="minutos" class="text ui-widget-content ui-corner-all">
    					<option value="00">00</option>
@@ -80,7 +83,9 @@
       		<td colspan="2">
       		<!-- Allow form submission with keyboard without duplicating the dialog button -->
       		<button id="buttonAgendar">Regendar Cita</button>
-      		<button id="buttonCancelar">Cancelar</button>
+      		<button id="buttonConfirmar">Confirmar Cita</button>
+      		<button id="buttonCancelar">Cancelar Cita</button>
+      		<button id="buttonRegresar">Regresar</button>
       		<input type="hidden" name="id_paciente" id="id_paciente" value="0">
       		<input type="hidden" name="id_cita" id="id_cita" value="0">
       		<input type="hidden" name="id_tratamiento" id="id_tratamiento" value="0">
@@ -90,17 +95,31 @@
 </div>
 
 
-<div id="dialog-message" title="Download complete">
+<div id="dialog-message" title="Cambiar Agenda">
   <p>
     <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-    Cita Cambiada!
+    La cita ha sido re-agendada!
   </p>
   <p>
-    Success.
+    Gracias!
   </p>
 </div>
 
+<div id="cancelar-message" title="Cancelar Cita">
+	<p>
+	<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span>
+		Estas seguro que deseas cancelar la cita?
+	</p>	
+</div>
 
+<div id="confirmar-message" title="Confirmar Cita">
+	<p>
+	<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span>
+		El paciente ha confirmado la cita para la fecha y hora agendada?
+	</p>	
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 <script th:inline="javascript">
 
@@ -112,6 +131,8 @@ var cita_id = /*[[${param.id_cita}]]*/;
 
 /*]]>*/
 
+var animationTimeout = 350;
+var animationType = "fold";
 
 $(document).ready(function() {
 	
@@ -125,20 +146,36 @@ $(document).ready(function() {
 		addPaciente();
 	});
 	
-	$('#buttonCancelar').click(function()  {
+	$('#buttonRegresar').click(function()  {
 		location.href = "/";
 	});
+	
+	$('#buttonCancelar').click(function() {
+		$( "#cancelar-message" ).dialog( "open" );
+        $( "#cancelar-message" ).animate({
+            backgroundColor: "#aa0000",
+            color: "#fff"            
+          }, 1000 );
+	});
+	
+	$('#buttonConfirmar').click(function() {
+		$( "#confirmar-message" ).dialog( "open" );
+        $( "#confirmar-message" ).animate({
+            backgroundColor: "#99ff99",
+            color: "#000000"            
+          }, 1000 );
+	})	
 	
     $( "#dialog-message" ).dialog({
         modal: true,
         autoOpen: false,
         show: {
-          effect: "fold",
-          duration: 600
+          effect: animationType,
+          duration: animationTimeout
         },
         hide: {
-          effect: "explode",
-          duration: 1000
+          effect: animationType,
+          duration: animationTimeout
         },        
         buttons: {
           Ok: function() {
@@ -147,6 +184,91 @@ $(document).ready(function() {
           }
         }
       });	
+    
+    $( "#cancelar-message" ).dialog({
+        modal: true,
+        autoOpen: false,
+        show: {
+          effect: animationType,
+          duration: animationTimeout
+        },
+        hide: {
+          effect: animationType,
+          duration: animationTimeout
+        },        
+        buttons: {
+          Si: function() {
+        	  $( this ).dialog( "close" );
+        	  borrarCita();
+          },
+          No: function() {
+            $( this ).dialog( "close" );            
+          }
+        }
+      });
+    
+    $( "#confirmar-message" ).dialog({
+        modal: true,
+        autoOpen: false,
+        show: {
+          effect: animationType,
+          duration: animationTimeout
+        },
+        hide: {
+          effect: animationType,
+          duration: animationTimeout
+        },        
+        buttons: {
+          Si: function() {
+        	  $( this ).dialog( "close" );
+        	  confirmarCita();
+          },
+          No: function() {
+            $( this ).dialog( "close" );            
+          }
+        }
+      });    
+    
+    function borrarCita() {
+    	debugger;
+    	console.log("about to delete cita with id=" + id_cita);
+    	var id_cita = $('#id_cita').val();
+		$.ajax({
+			type: "DELETE",
+			url: '/cita/' + id_cita ,
+			contentType: 'application/json',
+			dataType: 'json',
+			beforeSend: function(req) {
+				$('#progressbar').progressbar('value',30);
+			},
+			success: function(data){
+				//debugger	    					
+				$('#progressbar').progressbar('value',99);
+				location.href="/";
+			},
+		    failure: function(errMsg) {alert(errMsg);}
+		});
+    }
+    
+    function confirmarCita() {
+    	var id_cita = $('#id_cita').val();
+    	debugger;
+		$.ajax({
+			type: "POST",
+			url: '/cita/' + id_cita ,
+			contentType: 'application/json',
+			dataType: 'json',
+			beforeSend: function(req) {
+				$('#progressbar').progressbar('value',30);
+			},
+			success: function(data){
+				//debugger	    					
+				$('#progressbar').progressbar('value',99);
+				location.href="/";
+			},
+		    failure: function(errMsg) {alert(errMsg);}
+		});
+    }
 	
 	function addPaciente() {
 		var nombre = $("#nombre").val();
@@ -159,6 +281,9 @@ $(document).ready(function() {
 		      var options = {};
 			$( "#horas" ).show( "bounce", options, 600, function() {} );
 			return;
+		}
+		if(horas < 10) {
+			horas = "0" + horas;
 		}
 		var minutos = $("#minutos").val();
 		var fecha = $("#fecha").val();

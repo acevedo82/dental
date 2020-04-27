@@ -8,21 +8,20 @@
 	<tr>
 		<td width="15%" valign="top">
 			<div id="menu">
-				  <h3>Citas</h3>
-				  <div>
-				    <p>	
-				    	<ul>			    	
-				    		<li><a href="/agregarCita">Agregar Cita</a></li>				    		
-				    	</ul>
-				    </p>
-				  </div>			
-				  <h3>Paciente</h3>
+				  <h3>Lista de Espera</h3>
 				  <div>
 				    <p>
 				    	<!-- button id="buttonPacientes" name="buttonPacientes" class="ui-button ui-widget ui-corner-all">Pacientes</button -->
-				    	<button id="buttonListaEspera" name="buttonListaEspera" class="ui-button ui-widget ui-corner-all">Lista de Espera</button>				    	
+				    	<button id="buttonListaEspera" name="buttonListaEspera" class="ui-button ui-widget ui-corner-all">Agregar</button>
+				    	<div th:replace="espera :: espera-fragment"></div>				    	
 				    </p>
-				  </div>
+				  </div>			
+				  <h3>Citas</h3>
+				  <div>
+				    <p>				    				   
+				    	<button id="buttonAgregarCita" name="buttonAgregarCita" class="ui-button ui-widget ui-corner-all">Agregar Cita</button>				    						    	
+				    </p>
+				  </div>			
 				  <h3>Reportes</h3>
 				  <div>
 				    <p>
@@ -34,12 +33,21 @@
 		<td><div id="calendar"></div></td>
 	</tr>
 </table>
-
+<div th:replace="fragments/footer :: footer"></div>
 
 </body>
 <script>
 
 $(document).ready(function() {
+	
+	$('#buttonAgregarCita').click(function() {
+		location.href="/agregarCita";
+	});	
+	
+	$('#buttonListaEspera').click(function() {
+		location.href="/listaDeEspera";
+	});
+	
 	$('#menu').accordion();
 	
 	var confirmacionColor = ['#4169E1', '#228B22'];
@@ -50,9 +58,15 @@ $(document).ready(function() {
 		type: "GET",
 		url: '/cita',
 		contentType: 'application/json',
-		dataType: 'json',				
+		dataType: 'json',	
+		beforeSend: function(req) {
+			$('#progressbar').progressbar('enable');
+			$('#progressbar').progressbar('value',30);
+		},		
 		success: function(data){					
-			////debugger
+			////debugger			
+			$('#progressbar').progressbar('value',80);			
+			
 			$.each(data, function(key,value) {
 				console.log("agregando cita [" + value["paciente"]["nombre"] + ' - ' + value["paciente"]["apellido1"] + ' ==> ' + new Date(value["startDate"]) + "]")
 				//debugger;
@@ -67,8 +81,9 @@ $(document).ready(function() {
 		            id: value["id"]
 		        });						
 			});
-			
-			
+			$('#progressbar').progressbar('value',100);
+			$('#progressbar').progressbar('option', 'disabled');
+			$('#progressbar').progressbar('value',0);
 		},
 	    failure: function(errMsg) {alert(errMsg);}
 	});
@@ -85,12 +100,23 @@ calendar = new FullCalendar.Calendar(calendarE1, {
 	  plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
 	  defaultView: 'timeGridWeek',
 	  selectable: true,
+	  droppable: true,
+	  editable: true,
 	  minTime: "09:00",
 	  maxTime: "22:00",
 	  hiddenDays: [ 0 ],
 	  height: 800,	    	  
     select: agregarEvento,
     eventOverlap: true,
+    drop: function(info) {
+
+    },
+    eventReceive: function(eventClickInfo ) {
+    	debugger;
+   	  	var event = eventClickInfo['event'];
+     	var id_espera = event['id'];
+     	agregarEvento(event, id_espera);
+    },
     eventClick: function(eventClickInfo) {      
   	  var event = eventClickInfo['event'];
   	  var id = event['id'];
@@ -100,7 +126,7 @@ calendar = new FullCalendar.Calendar(calendarE1, {
 
 calendar.render();	
 
-function agregarEvento(event) {
+function agregarEvento(event, id_espera) {
 	console.log("About to add calendar event at " + event.startStr);
 	debugger;	
 	var year = event.start.getFullYear();
@@ -123,8 +149,12 @@ function agregarEvento(event) {
 	if(mins == 0 || mins == "0") {
 		mins = "00";
 	}
+	var url = "/agregarCita?startStr=" + fecha + "&horas=" + hours + "&minutos=" + mins;
+	if(id_espera != null && id_espera != "") {
+		 url = url + "&id_espera="+id_espera;
+	} 
 	
-	location.href = "/agregarCita?startStr=" + fecha + "&horas=" + hours + "&minutos=" + mins;	
+	location.href = url;
 	
 }
 

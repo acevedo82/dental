@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.acevedo.dental.data.PacienteDAO;
 import com.acevedo.dental.model.Cita;
+import com.acevedo.dental.model.ListaEspera;
 import com.acevedo.dental.model.Paciente;
 import com.acevedo.dental.model.Tratamiento;
 
@@ -46,8 +47,28 @@ class DentalApplicationTests {
 	
 	@Test
 	void listaDeEspera() {
-		List<Paciente> p =this.dao.findPacientesEnListaDeEspera();
+		Paciente p = dao.findPaciente(1);
+		ListaEspera espera = new ListaEspera();
+		espera.setPaciente(p);
+		espera.setInformacion("Nueva Lista Espera");
+		dao.agregarListaDeEspera(espera);
+		
+		Paciente p2 = new Paciente();
+		p2.setNombre("Test");
+		p2.setApellido1("Paciente");
+		p2.setApellido2("Lista de Espera");
+		p2.setTelefono("1234567890");
+		
+		ListaEspera espera2 = new ListaEspera();
+		espera2.setInformacion("Segunda lista de espera");
+		espera2.setPaciente(p2);
+		dao.agregarListaDeEspera(espera2);
+		
+		List<ListaEspera> listaEspera =this.dao.findPacientesEnListaDeEspera();
+		
 		assertNotNull(p);
+		assertNotNull(listaEspera);
+		assertEquals(2, listaEspera.size());
 	}
 	
 	/**
@@ -82,5 +103,5 @@ class DentalApplicationTests {
 		assertNull(c);
 	}
 	
-
+	
 }

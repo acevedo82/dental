@@ -25,5 +25,17 @@ public class MainController {
 		model.addAttribute("date", new java.util.Date());
 		return "cambiarCita";
 	}	
+
 	
+	@RequestMapping( value = "/listaDeEspera", method = RequestMethod.GET)
+	public String listaEspera(Model model) {
+		model.addAttribute("date", new java.util.Date());
+		return "listaDeEspera";
+	}
+	
+	@RequestMapping( value = "/mobile", method = RequestMethod.GET)
+	public String mobileIndex(Model model) {
+		model.addAttribute("date", new java.util.Date());
+		return "mobile/index";
+	}	
 }

@@ -8,6 +8,6 @@ public class DentalApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DentalApplication.class, args);
-	}
+	}  
 
 }

@@ -7,9 +7,7 @@ public class Paciente {
 	private String apellido1;
 	private String apellido2;
 	private String telefono;
-	private String espera;
-	
-	
+
 	
 	public int getId() {
 		return id;
@@ -41,11 +39,6 @@ public class Paciente {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
-	public String getEspera() {
-		return espera;
-	}
-	public void setEspera(String espera) {
-		this.espera = espera;
-	}	
+	
 
 }

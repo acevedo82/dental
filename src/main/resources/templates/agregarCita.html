@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: headerfiles">
-    
+<head th:replace="fragments/header :: headerfiles">    
 </head>
 <body>
 
@@ -51,6 +50,8 @@
       				<option value="11">11am</option>
       				<option value="12">12pm</option>
       				<option value="13">01pm</option>
+      				<option value="14">02pm</option>
+      				<option value="15">03pm</option>      				
       				<option value="16">04pm</option>
       				<option value="17">05pm</option>
       				<option value="18">06pm</option>
@@ -90,6 +91,7 @@
       		<button id="buttonAgendar">Agendar</button>
       		<button id="buttonCancelar">Cancelar</button>
       		<input type="hidden" name="id_paciente" id="id_paciente" value="0">
+      		<input type="hidden" name="id_espera" id="id_espera" value="0">
       		<input type="hidden" name="id_cita" id="id_cita" value="0">
       		<input type="hidden" name="id_tratamiento" id="id_tratamiento" value="0">
       		</td>
@@ -98,7 +100,7 @@
 </div>
 
 
-<div id="dialog-message" title="Download complete">
+<div id="dialog-message" title="Agregar Cita">
   <p>
     <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
     Cita Agregada!
@@ -108,7 +110,7 @@
   </p>
 </div>
 
-
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 <script th:inline="javascript">
 
@@ -119,10 +121,38 @@ var startStr = /*[[${param.startStr}]]*/;
 var hours = /*[[${param.horas}]]*/;
 var mins = /*[[${param.minutos}]]*/;
 
+var animationTimeout = 350;
+var animationType = "fold";
+
+var id_espera = /*[[${param.id_espera}]]*/;
 
 /*]]>*/
 
 $(document).ready(function() {
+	
+	if(id_espera != null && id_espera != "") {
+		debugger;
+		$('#id_espera').val(id_espera);
+		$.ajax({
+			type: "GET",
+			url: '/listaEspera/' + id_espera,
+			contentType: 'application/json',
+			dataType: 'json',				
+			success: function(data){
+				console.log(data);
+				var id_paciente = null;
+				if(data!= null) {
+					id_paciente = data['paciente']['id'];
+					$('#id_paciente').val(id_paciente);
+					console.log("Tratando de obtener datos del paciente id="+id_paciente);
+					loadPaciente();					
+				}
+
+			},
+		    failure: function(errMsg) {alert(errMsg);}
+		});
+		
+	}
 	
 	$("#fecha").datepicker({
 		dateFormat: "yy-mm-dd"
@@ -149,12 +179,12 @@ $(document).ready(function() {
         modal: true,
         autoOpen: false,
         show: {
-          effect: "fold",
-          duration: 600
+          effect: animationType,
+          duration: animationTimeout
         },
         hide: {
-          effect: "explode",
-          duration: 1000
+          effect: animationType,
+          duration: animationTimeout
         },        
         buttons: {
           Ok: function() {
@@ -189,7 +219,7 @@ $(document).ready(function() {
 		var id_cita =  $("#id_cita").val();			
 		var tratamiento = $( "#tratamiento" ).text();
 		var id_tratamiento_option = $( "#tratamiento" ).val();
-		
+		var id_espera = $('#id_espera').val();
 		//debugger
 		var invokeMethod = "PUT";
 		// si estamos agregando, el metodo nos regresa el id en la respuesta
@@ -197,10 +227,14 @@ $(document).ready(function() {
 		if(id_cita != null && id_cita != "" && id_cita != "0") {
 			invokeMethod = "POST";				
 		}
+		var requestUrl = '/cita';
+		if(id_espera != null && id_espera != "") {
+			requestUrl = requestUrl + "?id_espera=" + id_espera;
+		}
 		
 		$.ajax({
 			type: invokeMethod,
-			url: '/cita',
+			url: requestUrl,
 			contentType: 'application/json',
 			dataType: 'json',
 			data: JSON.stringify(
@@ -220,8 +254,12 @@ $(document).ready(function() {
 				     	}
 					}
 				  ),
+			beforeSend: function(req) {
+				$('#progressbar').progressbar('value',30);				
+			},				  
 			success: function(data){
 				//debugger;
+				$('#progressbar').progressbar('value',99);
 				$( "#dialog-message" ).dialog( "open" );								
 			 },
 		    failure: function(errMsg) {alert(errMsg);}

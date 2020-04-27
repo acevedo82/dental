@@ -1,43 +1,67 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<meta charset="UTF-8" />
-<head>
+<head th:replace="fragments/header :: headerfiles">
+<style>
+
+
+  #external-events .fc-event {
+    margin: 1em 0;
+    cursor: move;
+  }
+
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<div th:fragment="paciente-table-fragment">
-    <div id="paciente-table"></div>
-	<script>
-		var table;
-		
-		
-		$(document).ready(function() {
-		
-			table = new Tabulator("#paciente-table", {
-			    //width:"800",
-			    layout:"fitColumns",
-			    ajaxURL:"/lista-de-espera",
-			    //ajaxProgressiveLoad:"scroll",
-			    //data: mydata,
-			    paginationSize:20,
-			    placeholder:"No Data Set",
-			    rowClick: function(e, row) { 
-			    	////debugger
-			    	var rowData = row.getData();
-			    	selectedPaciente = rowData['id'];		    	
-			    	//dialog.dialog('open');
-			    	
-			    },
-			    columns:[
-			        {title:"id", field:"id", sorter:"number", width:50},
-			        {title:"Nombre", field:"nombre", sorter:"string",width:200},
-			        {title:"Apellido1", field:"apellido1", sorter:"string",width:200},
-			        {title:"Apellido2", field:"apellido2", hozAlign:"center", width:200	},
-			        {title:"Telefono", field:"telefono", hozAlign:"center", width:200	},
-			    ],
-			});	
+<div th:fragment="espera-fragment">
+    <p>
+      <strong>En Lista de Espera</strong>
+    </p>  
+  <div id='external-events'>
+    <p>
+      <input type='checkbox' id='drop-remove' />
+      <label for='drop-remove'>remove after drop</label>
+    </p>
+  </div>
+	<script th:inline="javascript">
+	
+	/*<![CDATA[*/
+	
+	
+	
+	/*]]>*/	
+	var Draggable = FullCalendarInteraction.Draggable;
+	var containerEl = document.getElementById('external-events');
+	
+	
+	$(document).ready(function() {		
+		$.ajax({
+			type: "GET",
+			url: '/listaEspera',
+			contentType: 'application/json',
+			dataType: 'json',				
+			success: function(data){
+				var container = $( "#external-events" );
+				container.empty();
+				$.each(data, function(key,value) {						
+					var divStr = '<div data-event=\'{ "id" : '+value['id']+' , "title": "espera", "duration": "00:30" }\' class=\'fc-event\'>'+value['paciente']['nombre']+ ' ' +value['paciente']['apellido1']+ ' ' + value['paciente']['telefono'] + '</div>';			
+					 $('#external-events').append(divStr);					
+				});
+			},
+		    failure: function(errMsg) {alert(errMsg);}
 		});
-	</script>
-</div>	    
+	
+	});
+	
+
+	new Draggable(containerEl, {
+		  itemSelector: '.fc-event'
+		});
+	
+	</script>	  
+  
+</div>
+
 </body>
 
 </html>

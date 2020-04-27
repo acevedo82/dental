@@ -4,8 +4,21 @@
 <meta charset="UTF-8" />
 </head>
 <body>
-    <div th:fragment="footer">
-        <h1>Dental Mundo Kids - Footer</h1>
+    <div th:fragment="footer" align="center">
+    <br><br>
+    	<table> 
+    		<tr><td><div id="progressbar"><div class="progress-label">Status</div></div></td></tr>
+        </table>
+        <script>
+        	$(function() {
+        	    $( "#progressbar" ).progressbar({
+        	        value: 0,
+        	        disabled: true
+        	      });        	   
+        	});
+        	
+
+        </script>
     </div>
     Esto no sale
 </body>
