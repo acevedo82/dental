@@ -196,18 +196,37 @@ $(document).ready(function() {
 	
 	function addPaciente() {
 		var nombre = $("#nombre").val();
-		var apellido1 = $("#apellido1").val(); 
+		if(nombre == null || nombre == "") {
+			alert("Por favor especifica un nombre de paciente valido para la consulta");
+			return;			
+		}
+		var apellido1 = $("#apellido1").val();
+		if(apellido1 == null || apellido1 == "") {
+			alert("Por favor especifica un apellido valido para el paciente");
+			return;			
+		}		
 		var apellido2 = $("#apellido2").val();
 		var telefono = $("#telefono").val();
-		var horas = $("#horas").val();
+		if(telefono == null || telefono == "") {
+			alert("Por favor especifica numero telefonico de contacto");
+			return;			
+		}		
+		var horas = $("#horas").val();		
 		if(horas == null || horas == "") {
-		      // Most effect types need no options passed by default
-		      var options = {};
-			$( "#horas" ).show( "bounce", options, 600, function() {} );
+			alert("Por favor selecciona un horario valido para la consulta");
 			return;
 		}
+		
 		var minutos = $("#minutos").val();
+		if(minutos == null || minutos == "") {
+			alert("Por favor selecciona un horario valido para la consulta");
+			return;
+		}
 		var fecha = $("#fecha").val();
+		if(fecha == null || fecha == "") {
+			alert("Por favor selecciona una fecha valida para la consulta");
+			return;
+		}
 		var duracion = $("#duracion").val();
 		var duracionMillis = duracion * (60*1000);
 		var calendarStart = fecha + "T" + horas + ":" + minutos;			
@@ -219,6 +238,10 @@ $(document).ready(function() {
 		var id_cita =  $("#id_cita").val();			
 		var tratamiento = $( "#tratamiento" ).text();
 		var id_tratamiento_option = $( "#tratamiento" ).val();
+		if(id_tratamiento_option == null || id_tratamiento_option == "") {
+			alert("Por favor selecciona el motivo de la consulta");
+			return;
+		}
 		var id_espera = $('#id_espera').val();
 		//debugger
 		var invokeMethod = "PUT";
