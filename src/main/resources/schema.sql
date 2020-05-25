@@ -67,3 +67,11 @@ CREATE TABLE CITA (
 		CONSTRAINT FK_CITA_PACIENTE FOREIGN KEY (id_paciente) REFERENCES PACIENTE (id)
 )
 COLLATE='utf8_general_ci';
+
+insert into cita(id_paciente, id_tratamiento, startdate, endDate) values(1,1,UNIX_TIMESTAMP(NOW())*1000, UNIX_TIMESTAMP(NOW()+INTERVAL 30 MINUTE));
+insert into cita(id_paciente, id_tratamiento, startdate, endDate) values(1,1,UNIX_TIMESTAMP(NOW()+ INTERVAL 1 DAY)*1000, UNIX_TIMESTAMP(NOW()+INTERVAL 30 MINUTE));
+insert into cita(id_paciente, id_tratamiento, startdate, endDate) values(2,1,UNIX_TIMESTAMP(NOW()+ INTERVAL 3 DAY)*1000, UNIX_TIMESTAMP(NOW()+INTERVAL 30 MINUTE));
+insert into cita(id_paciente, id_tratamiento, startdate, endDate) values(2,1,UNIX_TIMESTAMP(NOW()+ INTERVAL 2 DAY)*1000, UNIX_TIMESTAMP(NOW()+INTERVAL 30 MINUTE));
+insert into cita(id_paciente, id_tratamiento, startdate, endDate) values(3,1,UNIX_TIMESTAMP(NOW()+ INTERVAL 5 DAY)*1000, UNIX_TIMESTAMP(NOW()+INTERVAL 30 MINUTE));
+insert into cita(id_paciente, id_tratamiento, startdate, endDate) values(3,1,UNIX_TIMESTAMP(NOW()- INTERVAL 1 DAY)*1000, UNIX_TIMESTAMP(NOW()+INTERVAL 30 MINUTE));
+
