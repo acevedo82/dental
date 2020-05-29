@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -207,6 +206,12 @@ public class MainRestController {
 		Cita cita = this.dao.findCita(id);
 		return cita; 
 	}	
+	
+	@RequestMapping( value = "/agenda", method = RequestMethod.GET)
+	public @ResponseBody String citas(@RequestParam(name = "startDate", required = true) String startDate, @RequestParam(name = "endDate", required = true) String endDate) throws Exception {
+		List<Cita> citas = this.dao.findCitasPorDia(startDate, endDate);
+		return  mapper.writeValueAsString(citas);
+	}		
 	
 	@RequestMapping(value = "/tratamiento", method = RequestMethod.GET)
 	public @ResponseBody String obtenerTratamientos() throws Exception {

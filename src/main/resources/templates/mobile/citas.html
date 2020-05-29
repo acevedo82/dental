@@ -1,14 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Page Title</title>
+	<title>Dental Mundo Kids</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript">
+		
+		//$( document ).on("pageinit", "#citas-dia", function(e) {
+			$( document ).on("pagebeforecreate", function(e) {
+			//$.mobile.showPageLoadingMsg();
+			$.ajax({
+			      url: "/agenda?startDate=2020-05-28&endDate=2020-05-29",
+			      contentType: 'application/json',
+			      type: 'GET',
+			      dataType: "json",
+				  beforeSend: function(req) {
+				
+				  },
+			      success: function( data ) {
+					// Check results.
+					//debugger;					
+					$.each(data, function(key,value) {	
+						//debugger;
+						var startDate = new Date(value['startDate']);
+						var endDate = new Date(value['endDate']);			
+						var year = startDate.getFullYear();
+						var month = startDate.getMonth();
+						if(month < 10) {
+							month = month+1;
+							month = "0" + month;
+						}
+						var day = startDate.getDate();
+						if(day < 10) {
+							day = "0" + day;
+						}
+						var fecha = year + '-' + month + '-' + day;
+				
+						var hours = startDate.getHours();
+						var mins = startDate.getMinutes();
+						//debugger;
+//  						$( "#citas-list" ).append('<li><div>'+
+// 								'<table border=0 width="100%">'+
+// 									'<tr>'+
+// 										'<td width="20%"><b>' + hours + ':' + mins + '</td>'+
+// 										'<td> ' + value['paciente'].nombre + ' ' + value['paciente'].apellido1 + '</b></td>'+
+// 										'<td width="10%"><button onClick>+</button></td>'+ 
+// 									'</tr>'+
+// 									'<tr>'+
+// 										'<td>'+
+// 											'<div data-role="collapsible"><h4>actions</h4><p>test</p></div>'+
+// 										'</td>'+
+// 									'</tr>'+
+// 								'</table>'+
+// 								'</div></li>'); 
+  						$( "#citas-list" ).append(
+  								'<li>'+
+  									'<div data-role="collapsible">'+
+	  									'<h4>['+ hours + ':' + mins + '] ' + value['paciente'].nombre + ' ' + value['paciente'].apellido1+'</h4>'+
+	  									'<p>actions</p>'+
+  									'</div>'+
+								'</li>');
+  						$('#citas-list').find('[data-role="collapsible"]').collapsible();
+					});
+
+			         // Append the Tweet items into our Tweet list and refresh the
+			         // entire list.
+			         //$( "#tweet-list" ).append(markup).listview( "refresh", true );
+
+			         // Transition to the Twitter results page.
+			         //$.mobile.changePage( $("#twitterPage") );
+			      },
+			      failure: function(errMsg) {
+			    	  debugger;
+			    	  alert(errMsg);
+			      }
+			   });			
+		});
+		
+	
+	</script>	
 	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
+
+
 
 <body>
 
@@ -18,24 +95,34 @@
 
 	<div data-role="navbar">
 	    <ul>
-	        <li><a href="/mobile/citas" class="ui-btn-active">Citas</a></li>
-	        <li><a href="/mobile/espera">Lista de Espera</a></li>
-	        <li><a href="/mobile/agendar">Agendar Cita</a></li>
+	        <li><a href="/mobile/" class="ui-btn-active" rel="external">Agenda</a></li>	        
+	        <li><a href="/mobile/agendar" rel="external">Programar Cita</a></li>
 	    </ul>
 	</div><!-- /navbar -->
 		
-	<div data-role="header">
-	test
+	<div data-role="header" id="citas-header">
+		<div th:text="${date}">Fecha:</div>
 	</div>
 	
-	<div role="main" class="ui-content"></div>
-	citas citas citas
+	<div role="content" class="ui-content">
+		<ul id="citas-list" data-role="listview" data-insert="true">
+			<li data-role="list-divider">Citas del Dia</li> 			
+		</ul>
+	</div>
+	
 	
 	<div data-role="footer">
-	test
+	
 	</div>
 	
 </div>
 
+<script>
+
+	$(document).ready(function() {
+		
+	});
+
+</script>
 </body>
 </html>

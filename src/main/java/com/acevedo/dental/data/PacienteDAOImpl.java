@@ -359,6 +359,17 @@ public class PacienteDAOImpl implements PacienteDAO {
 		return this.getJdbcTemplate().update(BORRAR_LISTA_ESPERA, new Object[] {id});
 	}
 
+
+
+
+	@Override
+	public List<Cita> findCitasPorDia(String startDate, String endDate) {
+		// Obtener todas las citas del dia
+		List<Cita> retVal = null;
+		retVal = this.getJdbcTemplate().query(FIND_CITAS_POR_DIA, new Object[] {startDate, endDate}, new CitaRowMapper());
+		return retVal;
+	}
+
 	
 	
 	

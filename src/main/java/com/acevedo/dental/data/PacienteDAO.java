@@ -20,6 +20,7 @@ public interface PacienteDAO {
 	public static final String BUSCAR_PACIENTE_SQL = "SELECT * FROM PACIENTE_BUSQUEDA WHERE MATCH(NOMBRE_COMPLETO) AGAINST (?)";
 	public static final String AGREGA_CITA_SQL = "INSERT INTO CITA(ID_PACIENTE, ID_TRATAMIENTO, STARTDATE, ENDDATE) VALUES (?,?,?,?)";
 	public static final String FIND_CITAS_SQL = "SELECT C.ID, C.ID_PACIENTE, C.ID_TRATAMIENTO, C.STARTDATE, C.ENDDATE, C.CONFIRMACION, P.NOMBRE, P.APELLIDO1, P.APELLIDO2, P.TELEFONO, T.TRATAMIENTO, T.DURACION, T.COSTO FROM CITA C, PACIENTE P, TRATAMIENTOS T WHERE C.ID_PACIENTE = P.ID AND C.ID_TRATAMIENTO = T.ID";
+	public static final String FIND_CITAS_POR_DIA = FIND_CITAS_SQL + " AND FROM_UNIXTIME(C.STARTDATE/1000) >= ? AND FROM_UNIXTIME(C.ENDDATE /1000) < ?";
 	public static final String FIND_CITAS_EN_90_DIAS_SQL = FIND_CITAS_SQL + " AND (FROM_UNIXTIME(C.STARTDATE/1000) > (NOW() - INTERVAL 7 DAY)) AND (FROM_UNIXTIME(C.STARTDATE/1000) < (NOW() + INTERVAL 90 DAY))";
 	public static final String FIND_CITA_BY_ID_SQL = FIND_CITAS_SQL + " AND C.ID = ?";
 	public static final String CAMBIAR_CITA = "UPDATE CITA SET STARTDATE = ?, ENDDATE = ?, CONFIRMACION = 0 WHERE ID = ?";
@@ -40,7 +41,8 @@ public interface PacienteDAO {
 	public List<Tratamiento> findTratamientos();
 	
 	public List<Item> buscarPaciente(String term);	
-	public List<Cita> findCitas();	
+	public List<Cita> findCitas();
+	public List<Cita> findCitasPorDia(String startDate, String endDate);
 	
 	public Cita cambiarCita(Cita original);
 	public int confirmarCita(Cita c);
