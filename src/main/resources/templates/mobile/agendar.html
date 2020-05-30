@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Dental Mundo Kids</title>
 
@@ -7,6 +7,98 @@
 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="/js/helper.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	$( document ).on('pageinit', '#agendarCita', function(e) {		
+		
+		try {
+			$.ajax({
+			      url: "/paciente/1",
+			      contentType: 'application/json',
+			      type: 'GET',
+			      dataType: "json",
+				  beforeSend: function(req) {
+					  //$.mobile.showPageLoadingMsg();
+					  $.mobile.loading('show');					  
+				  },
+			      success: function( data ) {
+			    	//debugger;
+			    	$.mobile.loading('hide');
+					$('#agendarCita-nombre').val(data['nombre']);
+					$('#agendarCita-apellido1').val(data['apellido1']);
+					$('#agendarCita-apellido2').val(data['apellido2']);
+					$('#agendarCita-telefono').val(data['telefono']);
+					var d = obtenerFecha();
+					//var h = obtenerHora();
+					$('#agendarCita-fecha').val(d);
+					console.log(d);
+					$('#agendarCita-idPaciente').val(data['id']);
+			      },
+			      failure: function(errMsg) {
+			    	  debugger;
+			    	  alert(errMsg);
+			      }
+			});
+		} catch(e) {
+			alert(e);
+		}
+		
+		$('#agendarCita-send').click(function() {
+			var startDateStr = $('#agendarCita-fecha').val();
+			var horas = $('#agendarCita-hora').val();
+			if(horas<10) {
+				horas="0"+horas;
+			}
+			var mins = $('#agendarCita-mins').val();
+			var startDate = new Date(startDateStr + "T" + horas + ":" +mins).getTime();
+			var duracion = $("#agendarCita-duracion").val();
+			var duracionMillis = duracion * (60*1000);
+			var endDate = new Date(startDate + duracionMillis).getTime();
+			var id_paciente =$('#agendarCita-idPaciente').val();
+			var nombre =
+			var apellido1 =
+			var apellido2 =
+			var telefono = 
+			debugger;
+			return;
+// 			$.ajax({
+// 				type: 'PUT',
+// 				url: '/cita',
+// 				contentType: 'application/json',
+// 				dataType: 'json',
+// 				data: JSON.stringify(
+// 						{
+// 							id: null,
+// 							startDate: startDate, 
+// 	   					    endDate: endDate, 
+// 					        paciente: {
+// 					    		id: id_paciente,
+// 					    	 	nombre:nombre, 
+// 					    	 	apellido1: apellido1, 
+// 					    	 	apellido2: apellido2, 
+// 					    	 	telefono: telefono
+// 					     	},
+// 					     	tratamiento: {
+// 					     		id: id_tratamiento_option			     	
+// 					     	}
+// 						}
+// 					  ),
+// 				beforeSend: function(req) {
+// 					$.mobile.loading('show');				
+// 				},				  
+// 				success: function(data){
+// 					//debugger;
+// 					$.mobile.loading('hide');
+// 					//$( "#dialog-message" ).dialog( "open" );								
+// 				 },
+// 			    failure: function(errMsg) {alert(errMsg);}
+// 			});		
+		});
+	});
+	
+
+	
+	</script>
 	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 
@@ -26,8 +118,9 @@
 		<h1>Nueva Cita</h1>
 	</div>
 
-	<div role="main" class="ui-content">
-		<form>		
+	<div role="main" class="ui-content">			
+			
+			<input type="hidden" name="agendarCita-idPaciente" id="agendarCita-idPaciente" value="">
 			<label for="nombre">Nombre:</label>
 			<input type="text" name="agendarCita-nombre" id="agendarCita-nombre" value="">
 
@@ -37,7 +130,10 @@
 			<label for="apellido2">Apellido Materno:</label>
 			<input type="text" name="agendarCita-apellido2" id="agendarCita-apellido2" value="">
 			
-			<label for="fecha">Fecha:</label>
+			<label for="agendarCita-telefono">Telefono:</label>
+			<input type="text" name="agendarCita-telefono" id="agendarCita-telefono" value="">			
+			
+			<label for="agendarCita-fecha">Fecha:</label>
 			<input type="date" name="agendarCita-fecha" id="agendarCita-fecha" value="">
 			<table>
 				</tr>
@@ -68,18 +164,23 @@
 					</td>					
 				</tr>
 			</table>
+			
+			<label for="agendarCita-duracion">Duracion:</label>
+			<select name="agendarCita-duracion" id="agendarCita-duracion">
+				<option value="30">30 min</option>
+				<option value="60">60 min</option>
+			</select>					
 						
 			<label for="agendarCita-tratamiento">Tratamiento:</label>
 			<select name="agendarCita-tratamiento" id="agendarCita-tratamiento">
 				<option value="1">CONSULTA</option>
 			</select>
-			<input type="submit" id="agendarCita-submit" value="Agendar">
-							
-		</form>
+			<button id="agendarCita-send" class="ui-button ui-shadow">Agendar</button>
+									
 	</div><!-- /content -->	
 	
 	<div data-role="footer">		
-		<a href="#landing" data-role="button">Regresar</a>
+		<a href="/mobile/" data-role="button" rel="external">Regresar</a>
 	</div><!-- /footer -->
 
 </div>

@@ -7,18 +7,19 @@
 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="/js/helper.js" type="text/javascript"/>
 	<script type="text/javascript">
 		
 		//$( document ).on("pageinit", "#citas-dia", function(e) {
 			$( document ).on("pagebeforecreate", function(e) {
 			//$.mobile.showPageLoadingMsg();
 			$.ajax({
-			      url: "/agenda?startDate=2020-05-28&endDate=2020-05-29",
+			      url: "/agenda?startDate=2020-05-29&endDate=2020-05-30",
 			      contentType: 'application/json',
 			      type: 'GET',
 			      dataType: "json",
 				  beforeSend: function(req) {
-				
+					  //$.mobile.showPageLoadingMsg();
 				  },
 			      success: function( data ) {
 					// Check results.
@@ -41,6 +42,9 @@
 				
 						var hours = startDate.getHours();
 						var mins = startDate.getMinutes();
+						if(mins < 10) {
+							mins = "0"+mins;
+						}
 						//debugger;
 //  						$( "#citas-list" ).append('<li><div>'+
 // 								'<table border=0 width="100%">'+
@@ -56,11 +60,16 @@
 // 									'</tr>'+
 // 								'</table>'+
 // 								'</div></li>'); 
+						var fontColor = value['confirmacion'] == 1 ? "#33c7cc" : "#657c7d";
   						$( "#citas-list" ).append(
-  								'<li>'+
+  								'<li>'+  									
   									'<div data-role="collapsible">'+
-	  									'<h4>['+ hours + ':' + mins + '] ' + value['paciente'].nombre + ' ' + value['paciente'].apellido1+'</h4>'+
-	  									'<p>actions</p>'+
+	  									'<h4><font color="'+fontColor+'"><table border=0 width="100%"><tr><td>'+ hours + ':' + mins + '</td><td align="right"> ' + value['paciente'].nombre + ' ' + value['paciente'].apellido1+'</td></tr></table></font></h4>'+
+	  									'<p align="center">'+
+	  										'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check ui-corner-all ui-btn-icon-notext" onclick="showDialogConfirmar('+value['id']+');">Confirmar</button>' +	  										
+	  										'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit ui-corner-all ui-btn-icon-notext" onclick="cambiarCita('+value['id']+');">Cambiar</button>' +
+	  										'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete ui-corner-all ui-btn-icon-notext" onclick="cancelarCita('+value['id']+');">Cancelar</button>' +
+	  									'</p>'+
   									'</div>'+
 								'</li>');
   						$('#citas-list').find('[data-role="collapsible"]').collapsible();
@@ -79,7 +88,6 @@
 			      }
 			   });			
 		});
-		
 	
 	</script>	
 	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -107,8 +115,8 @@
 	<div role="content" class="ui-content">
 		<ul id="citas-list" data-role="listview" data-insert="true">
 			<li data-role="list-divider">Citas del Dia</li> 			
-		</ul>
-	</div>
+		</ul>	
+	</div>	
 	
 	
 	<div data-role="footer">
@@ -117,10 +125,100 @@
 	
 </div>
 
+<!-- Dialog only page -->
+<div data-role="dialog" id="dialog" data-transition="flip">
+  <div data-role="header">
+    <h1>Confirmar Cita</h1>
+  </div>
+  <div data-role="content">
+    <p>El paciente ha confirmado asistencia?</p>
+    <button id="si-confirmar-cita" class="ui-button ui-shadow">Si</button>
+    <a href="#" class="ui-button ui-shadow" data-role="button" data-rel="back">No</a>
+  </div>
+</div>
+
+<!-- Dialog only page -->
+<div data-role="dialog" id="cancelarDialog" data-transition="flip">
+  <div data-role="header">
+    <h1>Cancelar Cita</h1>
+  </div>
+  <div data-role="content">
+    <p>Estas seguro que deseas cancelar la cita?</p>
+    <p>La cita tendria que ser creada de nuevo.</p>
+    <button id="si-cancelar-cita" class="ui-button ui-shadow">Si</button>
+    <a href="#" class="ui-button ui-shadow" data-role="button" data-rel="back">No</a>
+  </div>
+</div>
+
 <script>
+	var citaId = 0;
+	
+	$('#si-confirmar-cita').click(function() {  
+		$.ajax({
+		      url: "/cita/"+citaId,
+		      contentType: 'application/json',
+		      type: 'POST',
+		      dataType: "json",
+			  beforeSend: function(req) {
+				
+			  },
+		      success: function( data ) {
+		    	  $( "#dialog" ).dialog( "close" );
+		    	  location.reload();
+		      },
+		      failure: function(errMsg) {
+		    	  debugger;
+		    	  alert(errMsg);
+		      }
+		});
+		citaId = 0;
+	});
+	
+	$('#si-cancelar-cita').click(function() {  
+		$.ajax({
+		      url: "/cita/"+citaId,
+		      contentType: 'application/json',
+		      type: 'DELETE',
+		      dataType: "json",
+			  beforeSend: function(req) {
+				
+			  },
+		      success: function( data ) {
+		    	  $( "#cancelarDialog" ).dialog( "close" );
+		    	  location.reload();
+		      },
+		      failure: function(errMsg) {
+		    	  debugger;
+		    	  alert(errMsg);
+		      }
+		});
+		citaId = 0;
+	});
+
+	
+	function showDialogConfirmar(id) {
+		//alert('confirmar cita ' +id);	
+		//debugger;
+		citaId = id;
+		$.mobile.changePage( "#dialog", { role: "dialog", transition: "flip" } );
+	}
+	
+	function confirmarCita(id) {
+
+	}
+	
+	function cambiarCita(id) {
+		//alert('cambiar cita ' +id);
+	}
+	
+	function cancelarCita(id) {
+		//alert('cancelar cita ' +id);
+		$.mobile.changePage( "#cancelarDialog", { role: "dialog", transition: "flip" } );
+		citaId = id;
+	}
 
 	$(document).ready(function() {
-		
+
 	});
 
 </script>
