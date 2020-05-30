@@ -179,9 +179,13 @@ public class MainRestController {
 			logger.debug("Vamos a agregar cita nueva");
 			int citaAgregada = this.dao.agregaCita(p, t, startDate, endDate);
 			logger.debug("Cita agregada " + citaAgregada);
-			if(citaAgregada > 0) {
+			if(citaAgregada > 0 && id_espera != null) {
 				logger.debug("Lista de espera asociada borrada id=" + id_espera);
-				this.dao.borrarListaEspera(id_espera);
+				try {
+					this.dao.borrarListaEspera(id_espera);
+				} catch(Exception x) {
+					logger.debug("Error al borrar de lista de espera, a lo mejor no habia lista de espera", x);
+				}
 			}
 			r.setMensaje(DentalConstants.SUCCESS);
 			r.setData(new StringBuffer().append(citaAgregada).toString());

@@ -13,7 +13,7 @@
 		
 		try {
 			$.ajax({
-			      url: "/paciente/1",
+			      url: "/paciente/2",
 			      contentType: 'application/json',
 			      type: 'GET',
 			      dataType: "json",
@@ -55,44 +55,44 @@
 			var duracionMillis = duracion * (60*1000);
 			var endDate = new Date(startDate + duracionMillis).getTime();
 			var id_paciente =$('#agendarCita-idPaciente').val();
-			var nombre =
-			var apellido1 =
-			var apellido2 =
-			var telefono = 
-			debugger;
-			return;
-// 			$.ajax({
-// 				type: 'PUT',
-// 				url: '/cita',
-// 				contentType: 'application/json',
-// 				dataType: 'json',
-// 				data: JSON.stringify(
-// 						{
-// 							id: null,
-// 							startDate: startDate, 
-// 	   					    endDate: endDate, 
-// 					        paciente: {
-// 					    		id: id_paciente,
-// 					    	 	nombre:nombre, 
-// 					    	 	apellido1: apellido1, 
-// 					    	 	apellido2: apellido2, 
-// 					    	 	telefono: telefono
-// 					     	},
-// 					     	tratamiento: {
-// 					     		id: id_tratamiento_option			     	
-// 					     	}
-// 						}
-// 					  ),
-// 				beforeSend: function(req) {
-// 					$.mobile.loading('show');				
-// 				},				  
-// 				success: function(data){
-// 					//debugger;
-// 					$.mobile.loading('hide');
-// 					//$( "#dialog-message" ).dialog( "open" );								
-// 				 },
-// 			    failure: function(errMsg) {alert(errMsg);}
-// 			});		
+			var nombre =$('#agendarCita-nombre').val();
+			var apellido1 =$('#agendarCita-apellido1').val();
+			var apellido2 =$('#agendarCita-apellido2').val();
+			var telefono = $('#agendarCita-telefono').val();
+			//debugger;
+			
+			$.ajax({
+				type: 'PUT',
+				url: '/cita',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify(
+						{
+							id: 0,
+							startDate: startDate, 
+	   					    endDate: endDate, 
+					        paciente: {
+					    		id: id_paciente,
+					    	 	nombre:nombre, 
+					    	 	apellido1: apellido1, 
+					    	 	apellido2: apellido2, 
+					    	 	telefono: telefono
+					     	},
+					     	tratamiento: {
+					     		id: 1			     	
+					     	}
+						}
+					  ),
+				beforeSend: function(req) {
+					$.mobile.loading('show');				
+				},				  
+				success: function(data){
+					//debugger;
+					$.mobile.loading('hide');
+					$.mobile.changePage( "#okDialog", { role: "dialog", transition: "flow" } );					
+				 },
+			    failure: function(errMsg) {alert(errMsg);}
+			});		
 		});
 	});
 	
@@ -184,5 +184,17 @@
 	</div><!-- /footer -->
 
 </div>
+
+<!-- Dialog only page -->
+<div data-role="dialog" id="okDialog" data-transition="flow">
+  <div data-role="header">
+    <h1>Cita Agregada</h1>
+  </div>
+  <div data-role="content">
+    <p>La cita se ha agregado con exito!</p>        
+    <a href="/mobile" class="ui-button ui-shadow" data-role="button" rel="external">Ok</a>
+  </div>
+</div>
+
 </body>
 </html>
