@@ -4,7 +4,11 @@
     
 </head>
 <body>
+
 <table border="1">
+	<tr>
+		<td colspan="2"><button id="buttonMobile" name="buttonMobile" class="ui-button ui-widget ui-corner-all">Sitio Movil</button></td>
+	</tr>
 	<tr>
 		<td width="15%" valign="top">
 			<div id="menu">
@@ -22,12 +26,7 @@
 				    	<button id="buttonAgregarCita" name="buttonAgregarCita" class="ui-button ui-widget ui-corner-all">Agregar Cita</button>				    						    	
 				    </p>
 				  </div>			
-				  <h3>Reportes</h3>
-				  <div>
-				    <p>
-				    	<button id="buttonTratamientos" name="buttonTratamientos" class="ui-button ui-widget ui-corner-all">Tratamientos</button>				    	
-				    </p>
-				  </div>
+
 			</div>
 		</td>
 		<td><div id="calendar"></div></td>
@@ -46,6 +45,11 @@ $(document).ready(function() {
 	
 	$('#buttonListaEspera').click(function() {
 		location.href="/listaDeEspera";
+	});
+	
+	$('#buttonMobile').click(function() {
+		location.href="/mobile";
+		
 	});
 	
 	$('#menu').accordion();

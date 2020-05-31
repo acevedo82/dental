@@ -17,7 +17,7 @@ public class MainController {
 		model.addAttribute("date", new java.util.Date());
 		return "main";
 	}	
-
+	
 	@RequestMapping( value = "/agregarCita", method = RequestMethod.GET)
 	public String agregarCita(Model model) {
 		model.addAttribute("date", new java.util.Date());
