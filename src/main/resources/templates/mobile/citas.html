@@ -18,8 +18,8 @@
 	
 	/*]]>*/		
 		
-		//$( document ).on("pageinit", "#citas-dia", function(e) {
-			$( document ).on("pagebeforecreate", function(e) {
+		$( document ).on("pageinit", "#citas-dia", function(e) {
+			//$( document ).on("pagebeforecreate", function(e) {
 			//$.mobile.showPageLoadingMsg();
 			$.ajax({
 			      url: "/agenda?startDate="+fecha,
@@ -119,11 +119,9 @@
 		
 	<div data-role="header" id="citas-header">
 		<table align="center">
-			<tr>
-				<td><div th:text="${fecha}">Fecha:</div></td>				
+			<tr>							
 				<td>
-					<input type="date" id="nav-fecha" th:value="${fecha}" /> </td>
-					<td><button id="fecha-ver" class="ui-button ui-shadow">Ver</button>
+					<input type="date" id="nav-fecha" th:value="${fecha}" /> </td>					
 				</td>
 			</tr>
 		</table>
@@ -150,7 +148,7 @@
   <div data-role="content">
     <p>El paciente ha confirmado asistencia?</p>
     <button id="si-confirmar-cita" class="ui-button ui-shadow">Si</button>
-    <a href="#" class="ui-button ui-shadow" data-role="button" data-rel="back">No</a>
+    <a href="#" class="ui-button ui-shadow" data-role="button" data-rel="back" rel="external">No</a>
   </div>
 </div>
 
@@ -163,7 +161,7 @@
     <p>Estas seguro que deseas cancelar la cita?</p>
     <p>La cita tendria que ser creada de nuevo.</p>
     <button id="si-cancelar-cita" class="ui-button ui-shadow">Si</button>
-    <a href="#" class="ui-button ui-shadow" data-role="button" data-rel="back">No</a>
+    <a href="#" class="ui-button ui-shadow" data-role="button" data-rel="back" rel="external">No</a>
   </div>
 </div>
 
@@ -213,7 +211,7 @@
 	});
 
 	
-	$('#fecha-ver').click(function() {
+	$('#nav-fecha').change(function() {
 		//debugger;
 		var fecha = $('#nav-fecha').val();
 		
@@ -222,6 +220,7 @@
 		
 		location.href='/mobile?fecha='+fecha;
 	});
+	
 	
 	function showDialogConfirmar(id) {
 		//alert('confirmar cita ' +id);	
