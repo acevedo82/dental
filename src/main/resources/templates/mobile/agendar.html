@@ -8,57 +8,102 @@
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 	<script src="/js/helper.js" type="text/javascript"></script>
-	<script type="text/javascript">
+	<script th:inline="javascript">
 	$( document ).on('pageinit', '#agendarCita', function(e) {		
 		
-		try {
-			$.ajax({
-			      url: "/paciente/2",
-			      contentType: 'application/json',
-			      type: 'GET',
-			      dataType: "json",
-				  beforeSend: function(req) {
-					  //$.mobile.showPageLoadingMsg();
-					  $.mobile.loading('show');					  
-				  },
-			      success: function( data ) {
-			    	//debugger;
-			    	$.mobile.loading('hide');
-					$('#agendarCita-nombre').val(data['nombre']);
-					$('#agendarCita-apellido1').val(data['apellido1']);
-					$('#agendarCita-apellido2').val(data['apellido2']);
-					$('#agendarCita-telefono').val(data['telefono']);
-					var d = obtenerFecha();
-					//var h = obtenerHora();
-					$('#agendarCita-fecha').val(d);
-					console.log(d);
-					$('#agendarCita-idPaciente').val(data['id']);
-			      },
-			      failure: function(errMsg) {
-			    	  debugger;
-			    	  alert(errMsg);
-			      }
-			});
-		} catch(e) {
-			alert(e);
-		}
+		/*<![CDATA[*/
+
+
+		var id_paciente = /*[[${param.id_paciente}]]*/;
+		var fecha = /*[[${fecha}]]*/;
+
+		
+		/*]]>*/	
+		if(id_paciente == null) {
+			// nada, ejecucion normal.
+		} else {
+			try {
+				$.ajax({
+				      url: "/paciente/" + id_paciente,
+				      contentType: 'application/json',
+				      type: 'GET',
+				      dataType: "json",
+					  beforeSend: function(req) {
+						  //$.mobile.showPageLoadingMsg();
+						  $.mobile.loading('show');					  
+					  },
+				      success: function( data ) {
+				    	//debugger;
+				    	$.mobile.loading('hide');
+						$('#agendarCita-nombre').val(data['nombre']);						
+						$('#agendarCita-apellido1').val(data['apellido1']);
+						$('#agendarCita-apellido2').val(data['apellido2']);
+						$('#agendarCita-telefono').val(data['telefono']);
+						var d = obtenerFecha();
+						//var h = obtenerHora();
+						$('#agendarCita-fecha').val(d);
+						console.log(d);
+						$('#agendarCita-idPaciente').val(data['id']);
+				      },
+				      failure: function(errMsg) {
+				    	  debugger;
+				    	  alert(errMsg);
+				      }
+				});
+			} catch(e) {
+				alert(e);
+			}			
+		}	
+		
 		
 		$('#agendarCita-send').click(function() {
+			
+			// Verificar si la fecha de inicio esta seleccionada
 			var startDateStr = $('#agendarCita-fecha').val();
+			if(startDateStr == null || startDateStr == "") {
+				$.mobile.changePage( "#alertDialog", { role: "dialog", transition: "none" } );
+				return;			
+			}		
+			// Verificar si el usuario selecciono un horario adecuado
 			var horas = $('#agendarCita-hora').val();
+			if(horas == null || horas == "") {
+				$.mobile.changePage( "#alertDialog", { role: "dialog", transition: "none" } );
+				return;			
+			}				
 			if(horas<10) {
 				horas="0"+horas;
 			}
+			
 			var mins = $('#agendarCita-mins').val();
+			if(mins == null || mins == "") {
+				$.mobile.changePage( "#alertDialog", { role: "dialog", transition: "none" } );
+				return;			
+			}			
+			
 			var startDate = new Date(startDateStr + "T" + horas + ":" +mins).getTime();
 			var duracion = $("#agendarCita-duracion").val();
 			var duracionMillis = duracion * (60*1000);
 			var endDate = new Date(startDate + duracionMillis).getTime();
 			var id_paciente =$('#agendarCita-idPaciente').val();
+			// Verificar si tenemos nombre de paciente
 			var nombre =$('#agendarCita-nombre').val();
+			if(nombre == null || nombre == "") {
+				$.mobile.changePage( "#alertDialog", { role: "dialog", transition: "none" } );
+				return;			
+			}
+			// Verificar si tenemos apellido valido
 			var apellido1 =$('#agendarCita-apellido1').val();
+			if(apellido1 == null || apellido1 == "") {
+				$.mobile.changePage( "#alertDialog", { role: "dialog", transition: "none" } );
+				return;			
+			}				
 			var apellido2 =$('#agendarCita-apellido2').val();
+			// Neceistamos como contactar al paciente
 			var telefono = $('#agendarCita-telefono').val();
+			if(telefono == null || telefono == "") {
+				$.mobile.changePage( "#alertDialog", { role: "dialog", transition: "none" } );
+				return;			
+			}			
 			//debugger;
 			
 			$.ajax({
@@ -94,6 +139,36 @@
 			    failure: function(errMsg) {alert(errMsg);}
 			});		
 		});
+		
+		
+	   $( "#autocomplete" ).on( "filterablebeforefilter", function ( e, data ) {
+		        var $ul = $( this );
+		        var $input = $( data.input );
+		        var value = $input.val();
+		        var html = "";
+		        $ul.html( "" );
+		        if ( value && value.length > 3 ) {
+		            $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+		            $ul.listview( "refresh" );
+		            $.ajax({
+		                url: "/busqueda?term=" + value,
+		                dataType: "json",		                
+		                data: {
+		                    term: $input.val()
+		                }
+		            })
+		            .then( function ( response ) {
+		            	//debugger;
+		                $.each( response, function ( i, val ) {
+		                    html += '<li><a href="/mobile/agendar?id_paciente='+ val.id+ '" rel="external">' + val.value + '<a></li>';
+		                });
+		                $ul.html( html );
+		                $ul.listview( "refresh" );
+		                $ul.trigger( "updatelayout");
+		            });
+		        }
+		    });		
+		
 	});
 	
 
@@ -118,7 +193,12 @@
 		<h1>Nueva Cita</h1>
 	</div>
 
-	<div role="main" class="ui-content">			
+	<div role="main" class="ui-content">
+					
+			<form class="ui-filterable">
+			    <input id="autocomplete-input" data-type="search" placeholder="Buscar...">
+			</form>
+			<ul id="autocomplete" data-role="listview" data-inset="true" data-filter="true" data-input="#autocomplete-input"></ul>					
 			
 			<input type="hidden" name="agendarCita-idPaciente" id="agendarCita-idPaciente" value="">
 			<label for="nombre">Nombre:</label>
@@ -134,13 +214,14 @@
 			<input type="text" name="agendarCita-telefono" id="agendarCita-telefono" value="">			
 			
 			<label for="agendarCita-fecha">Fecha:</label>
-			<input type="date" name="agendarCita-fecha" id="agendarCita-fecha" value="">
+			<input type="date" name="agendarCita-fecha" id="agendarCita-fecha" th:value="${fecha}" >
 			<table>
 				</tr>
 				<tr>
 					<td>Hora:</td>
 					<td>
 						<select name="agendarCita-hora" id="agendarCita-hora">
+							<option value=""></option>
 							<option value="9">9am</option>
 							<option value="10">10am</option>
 							<option value="11">11am</option>
@@ -158,6 +239,7 @@
 					</td>
 					<td>
 						<select name="agendarCita-mins" id="agendarCita-mins">
+							<option value=""></option>
 							<option value="00">00</option>							
 							<option value="30">30</option>							
 						</select>
@@ -193,6 +275,18 @@
   <div data-role="content">
     <p>La cita se ha agregado con exito!</p>        
     <a href="/mobile" class="ui-button ui-shadow" data-role="button" rel="external">Ok</a>
+  </div>
+</div>
+
+<!-- Dialog only page -->
+<div data-role="dialog" id="alertDialog" data-transition="none">
+  <div data-role="header">
+    <h1>Error de validacion</h1>
+  </div>
+  <div data-role="content">
+    <p>Por favor completa los datos requeridos!</p>        
+    <p>Los campos que se necesitan estan marcados con (*)</p>
+    <a href="#" class="ui-button ui-shadow" data-role="button" data-rel="back">Entendido</a>
   </div>
 </div>
 

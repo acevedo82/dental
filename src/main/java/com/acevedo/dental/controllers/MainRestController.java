@@ -212,8 +212,8 @@ public class MainRestController {
 	}	
 	
 	@RequestMapping( value = "/agenda", method = RequestMethod.GET)
-	public @ResponseBody String citas(@RequestParam(name = "startDate", required = true) String startDate, @RequestParam(name = "endDate", required = true) String endDate) throws Exception {
-		List<Cita> citas = this.dao.findCitasPorDia(startDate, endDate);
+	public @ResponseBody String citas(@RequestParam(name = "startDate", required = true) String startDate) throws Exception {
+		List<Cita> citas = this.dao.findCitasPorDia(startDate);
 		return  mapper.writeValueAsString(citas);
 	}		
 	

@@ -363,10 +363,10 @@ public class PacienteDAOImpl implements PacienteDAO {
 
 
 	@Override
-	public List<Cita> findCitasPorDia(String startDate, String endDate) {
+	public List<Cita> findCitasPorDia(String startDate) {
 		// Obtener todas las citas del dia
 		List<Cita> retVal = null;
-		retVal = this.getJdbcTemplate().query(FIND_CITAS_POR_DIA, new Object[] {startDate, endDate}, new CitaRowMapper());
+		retVal = this.getJdbcTemplate().query(FIND_CITAS_POR_DIA, new Object[] {startDate, startDate}, new CitaRowMapper());
 		return retVal;
 	}
 
