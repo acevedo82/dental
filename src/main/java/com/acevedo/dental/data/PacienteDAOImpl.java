@@ -239,8 +239,9 @@ public class PacienteDAOImpl implements PacienteDAO {
 		long startDate = original.getStartDate();
 		long endDate = original.getEndDate();
 		int id = original.getId();
+		int tratamientoId = original.getTratamiento().getId();
 		logger.debug("cambiar cita a nueva fecha [start=" + new Date(startDate) + "end=" + new Date(endDate) + "] for id=" + id );
-		int updated = this.getJdbcTemplate().update(CAMBIAR_CITA, new Object[] {startDate, endDate, id});
+		int updated = this.getJdbcTemplate().update(CAMBIAR_CITA, new Object[] {startDate, endDate, tratamientoId, id});
 		logger.debug("Affected rows = " + updated);
 		
 		nuevaCita = findCita(id);
