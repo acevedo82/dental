@@ -55,6 +55,20 @@
 			}			
 		}	
 		
+		$.ajax({
+			type: "GET",
+			url: '/tratamiento',
+			contentType: 'application/json',
+			dataType: 'json',				
+			success: function(data){
+				$( "#agendarCita-tratamiento" ).empty();
+				$.each(data, function(key,value) {						
+					$( "#agendarCita-tratamiento" ).append($("<option></option>").attr("value",value["id"]).text(value["tratamiento"]));
+				});
+			},
+		    failure: function(errMsg) {alert(errMsg);}
+		});
+		
 		
 		$('#agendarCita-send').click(function() {
 			
@@ -104,6 +118,12 @@
 				$.mobile.changePage( "#alertDialog", { role: "dialog", transition: "none" } );
 				return;			
 			}			
+			
+			var id_tratamiento_option = $( "#agendarCita-tratamiento" ).val();
+			if(id_tratamiento_option == null || id_tratamiento_option == "") {
+				alert("Por favor selecciona el motivo de la consulta");
+				return;
+			}			
 			//debugger;
 			
 			$.ajax({
@@ -124,7 +144,7 @@
 					    	 	telefono: telefono
 					     	},
 					     	tratamiento: {
-					     		id: 1			     	
+					     		id: id_tratamiento_option			     	
 					     	}
 						}
 					  ),
@@ -250,13 +270,14 @@
 			
 			<label for="agendarCita-duracion">Duracion:</label>
 			<select name="agendarCita-duracion" id="agendarCita-duracion">
+				<option value="15">15 min</option>
 				<option value="30">30 min</option>
 				<option value="60">60 min</option>
 			</select>					
 						
 			<label for="agendarCita-tratamiento">Tratamiento:</label>
 			<select name="agendarCita-tratamiento" id="agendarCita-tratamiento">
-				<option value="1">CONSULTA</option>
+				
 			</select>
 			<button id="agendarCita-send" class="ui-button ui-shadow">Agendar</button>
 									

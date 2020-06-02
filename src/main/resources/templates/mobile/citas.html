@@ -70,13 +70,16 @@
 // 								'</table>'+
 // 								'</div></li>'); 
 						var fontColor = value['confirmacion'] == 1 ? "#33c7cc" : "#657c7d";
+						//debugger;
   						$( "#citas-list" ).append(
   								'<li>'+  									
   									'<div data-role="collapsible">'+
 	  									'<h4><font color="'+fontColor+'"><table border=0 width="100%"><tr><td>'+ hours + ':' + mins + '</td><td align="right"> ' + value['paciente'].nombre + ' ' + value['paciente'].apellido1+'</td></tr></table></font></h4>'+
-	  									'<p align="center">'+
+	  									'<p align="right">'+
+	  										value["tratamiento"]["tratamiento"] + '<br>' +
+	  										value["paciente"].telefono + '<br>' +
 	  										'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check ui-corner-all ui-btn-icon-notext" onclick="showDialogConfirmar('+value['id']+');">Confirmar</button>' +	  										
-	  										'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit ui-corner-all ui-btn-icon-notext" onclick="cambiarCita('+value['id']+');">Cambiar</button>' +
+	  										//'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit ui-corner-all ui-btn-icon-notext" onclick="cambiarCita('+value['id']+');">Cambiar</button>' +
 	  										'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-delete ui-corner-all ui-btn-icon-notext" onclick="cancelarCita('+value['id']+');">Cancelar</button>' +
 	  									'</p>'+
   									'</div>'+

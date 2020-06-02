@@ -64,6 +64,7 @@
       		<td><label for="duracion">Duracion</label></td>
       		<td>
       			<select name="duracion" id="duracion" class="text ui-widget-content ui-corner-all">
+					<option value="15">15 min</option>
       				<option value="30">30 min</option>
       				<option value="60">1hr</option>
       			</select>
@@ -230,7 +231,7 @@ $(document).ready(function() {
       });    
     
     function borrarCita() {
-    	debugger;
+    	//debugger;
     	console.log("about to delete cita with id=" + id_cita);
     	var id_cita = $('#id_cita').val();
 		$.ajax({
@@ -252,7 +253,7 @@ $(document).ready(function() {
     
     function confirmarCita() {
     	var id_cita = $('#id_cita').val();
-    	debugger;
+    	//debugger;
 		$.ajax({
 			type: "POST",
 			url: '/cita/' + id_cita ,
@@ -420,6 +421,7 @@ $(document).ready(function() {
 				
 				var startDate = new Date(data['startDate']);
 				var endDate = new Date(data['endDate']);
+				//debugger;
 				var duracion = (endDate - startDate)/(60*1000);				
 				var year = startDate.getFullYear();
 				var month = startDate.getMonth();
