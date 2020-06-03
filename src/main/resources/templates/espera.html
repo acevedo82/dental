@@ -44,7 +44,7 @@
 				var container = $( "#external-events" );
 				container.empty();
 				$.each(data, function(key,value) {						
-					var divStr = '<div data-event=\'{ "id" : '+value['id']+' , "title": "espera", "duration": "00:30" }\' class=\'fc-event\'>'+value['paciente']['nombre']+ ' ' +value['paciente']['apellido1']+ ' ' + value['paciente']['telefono'] + '</div>';			
+					var divStr = '<div title="'+value['informacion']+'" data-event=\'{ "id" : '+value['id']+' , "title": "espera", "duration": "00:30" }\' class=\'fc-event\'>'+value['paciente']['nombre']+ ' ' +value['paciente']['apellido1']+ ' ' + value['paciente']['telefono'] + '</div>';			
 					 $('#external-events').append(divStr);					
 				});
 			},

@@ -239,11 +239,12 @@ public class PacienteDAOImpl implements PacienteDAO {
 		long startDate = original.getStartDate();
 		long endDate = original.getEndDate();
 		int id = original.getId();
-		int tratamientoId = original.getTratamiento().getId();
+		int tratamientoId = original.getTratamiento().getId();	
+		
 		logger.debug("cambiar cita a nueva fecha [start=" + new Date(startDate) + "end=" + new Date(endDate) + "] for id=" + id );
 		int updated = this.getJdbcTemplate().update(CAMBIAR_CITA, new Object[] {startDate, endDate, tratamientoId, id});
 		logger.debug("Affected rows = " + updated);
-		
+		this.actuailzarPaciente(original.getPaciente());
 		nuevaCita = findCita(id);
 		return nuevaCita;
 	}
@@ -369,6 +370,26 @@ public class PacienteDAOImpl implements PacienteDAO {
 		List<Cita> retVal = null;
 		retVal = this.getJdbcTemplate().query(FIND_CITAS_POR_DIA, new Object[] {startDate, startDate}, new CitaRowMapper());
 		return retVal;
+	}
+
+	@Override
+	public int actuailzarPaciente(Paciente p) {
+		int updated = 0;
+		try {
+			String nombre = p.getNombre();
+			String apellido1 = p.getApellido1();
+			String apellido2 = p.getApellido2();
+			String telefono = p.getTelefono();
+			int id = p.getId();
+			logger.info("Vamos a actualizar informacion del paciente " + id);
+			updated = this.getJdbcTemplate().update(ACTUALIZAR_PACIENTE_SQL, new Object [] {nombre, apellido1, apellido2, telefono, id});
+			logger.info("Paciente actualizado = "+ updated);
+			
+			
+		} catch(Exception e) {
+			logger.warn("Error while updating paciente", e);
+		}
+		return updated;
 	}
 
 	

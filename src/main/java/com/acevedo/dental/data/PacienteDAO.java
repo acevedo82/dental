@@ -30,6 +30,7 @@ public interface PacienteDAO {
 	public static final String LISTA_DE_ESPERA = "SELECT A.ID, B.ID AS ID_PACIENTE, B.NOMBRE, B.APELLIDO1, B.APELLIDO2, B.TELEFONO, A.INFORMACION FROM LISTA_ESPERA A, PACIENTE B WHERE B.ID=A.ID_PACIENTE";
 	public static final String LISTA_DE_ESPERA_BY_ID = LISTA_DE_ESPERA + " AND A.ID=?";
 	public static final String AGREGAR_LISTA_ESPERA_SQL = "INSERT INTO LISTA_ESPERA(ID_PACIENTE, INFORMACION) VALUES (?,?)";
+	public static final String ACTUALIZAR_PACIENTE_SQL = "UPDATE PACIENTE SET NOMBRE=?, APELLIDO1=?, APELLIDO2=?, TELEFONO=? WHERE ID=?";
 
 	public int agregarPaciente(Paciente p);
 	public int agregaCita(Paciente p, Tratamiento t, long startDate, long endDate);
@@ -50,4 +51,6 @@ public interface PacienteDAO {
 	public int borrarListaEspera(int id);
 	
 	public int agregarListaDeEspera(ListaEspera espera);
+	
+	public int actuailzarPaciente(Paciente p);
 }

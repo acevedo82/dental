@@ -83,7 +83,7 @@
       	<tr>
       		<td colspan="2">
       		<!-- Allow form submission with keyboard without duplicating the dialog button -->
-      		<button id="buttonAgendar">Regendar Cita</button>
+      		<button id="buttonAgendar">Cambiar Cita</button>
       		<button id="buttonConfirmar">Confirmar Cita</button>
       		<button id="buttonCancelar">Cancelar Cita</button>
       		<button id="buttonRegresar">Regresar</button>
@@ -408,16 +408,16 @@ $(document).ready(function() {
 				$('#id_paciente').val(data['paciente']['id']);
 				$('#id_cita').val(data['id']);
 				$("#nombre").val(data['paciente']['nombre']);
-				$("#nombre").prop("disabled", true);
+				//$("#nombre").prop("disabled", true);
 				
 				$("#apellido1").val(data['paciente']['apellido1']);
-				$("#apellido1").prop("disabled", true);
+				//$("#apellido1").prop("disabled", true);
 				
 				$("#apellido2").val(data['paciente']['apellido2']);
-				$("#apellido2").prop("disabled", true);
+				//$("#apellido2").prop("disabled", true);
 				
 				$("#telefono").val(data['paciente']['telefono']);
-				$("#telefono").prop("disabled", true);					
+				//$("#telefono").prop("disabled", true);					
 				
 				var startDate = new Date(data['startDate']);
 				var endDate = new Date(data['endDate']);
