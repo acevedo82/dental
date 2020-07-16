@@ -38,7 +38,11 @@
 						var startDate = new Date(value['startDate']);
 						var endDate = new Date(value['endDate']);			
 						var year = startDate.getFullYear();
-						var month = startDate.getMonth();						
+						var month = startDate.getMonth();	
+						var notas = value['notas'];
+						if(notas == null || notas == undefined) {
+							notas = 'N/A';	
+						}
 						if(month < 10) {
 							month = month+1;
 							month = "0" + month;
@@ -77,7 +81,7 @@
 	  									'<h4><font color="'+fontColor+'"><table border=0 width="100%"><tr><td>'+ hours + ':' + mins + '</td><td align="right"> ' + value['paciente'].nombre + ' ' + value['paciente'].apellido1+'</td></tr></table></font></h4>'+
 	  									'<p align="right">'+
 	  										value["tratamiento"]["tratamiento"] + '<br>' +
-	  										value["notas"] + '<br>' +
+	  										notas  + '<br>' +
 	  										value["paciente"].telefono + '<br>' +
 	  										'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-check ui-corner-all ui-btn-icon-notext" onclick="showDialogConfirmar('+value['id']+');">Confirmar</button>' +	  										
 	  										//'<button class="ui-btn ui-btn-inline ui-btn-icon-left ui-icon-edit ui-corner-all ui-btn-icon-notext" onclick="cambiarCita('+value['id']+');">Cambiar</button>' +
