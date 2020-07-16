@@ -123,7 +123,11 @@
 			if(id_tratamiento_option == null || id_tratamiento_option == "") {
 				alert("Por favor selecciona el motivo de la consulta");
 				return;
-			}			
+			}	
+			
+			// Verificar si notas
+			var notas =$('#agendarCita-notas').val();
+			
 			//debugger;
 			
 			$.ajax({
@@ -145,7 +149,8 @@
 					     	},
 					     	tratamiento: {
 					     		id: id_tratamiento_option			     	
-					     	}
+					     	},
+					     	notas: notas
 						}
 					  ),
 				beforeSend: function(req) {
@@ -281,6 +286,9 @@
 			<select name="agendarCita-tratamiento" id="agendarCita-tratamiento">
 				
 			</select>
+			<label for="notas">Notas:</label>
+			<input type="text" name="agendarCita-notas" id="agendarCita-notas" value="">
+						
 			<button id="agendarCita-send" class="ui-button ui-shadow">Agendar</button>
 									
 	</div><!-- /content -->	

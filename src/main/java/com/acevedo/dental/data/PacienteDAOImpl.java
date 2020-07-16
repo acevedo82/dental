@@ -123,7 +123,7 @@ public class PacienteDAOImpl implements PacienteDAO {
 
 	@Override
 	@Transactional
-	public int agregaCita(Paciente p, Tratamiento t, long startDate, long endDate) {
+	public int agregaCita(Paciente p, Tratamiento t, long startDate, long endDate, String notas) {
 		// ADD CITA
 		int affected = 0;
 		int id_pac = 0;
@@ -142,7 +142,7 @@ public class PacienteDAOImpl implements PacienteDAO {
 					
 		logger.debug("Start: " + startDate + " || End: " + endDate);		
 		//Paciente pac = findPaciente(id_pac);
-		affected = this.getJdbcTemplate().update(AGREGA_CITA_SQL, new Object[] {id_pac, t.getId(), startDate, endDate});
+		affected = this.getJdbcTemplate().update(AGREGA_CITA_SQL, new Object[] {id_pac, t.getId(), startDate, endDate, notas});
 		if(affected > 0) 
 			id_inserted = this.getJdbcTemplate().queryForObject(SELECT_LAST_INSERT_SQL, Integer.class);
 		return id_inserted;
@@ -190,6 +190,7 @@ public class PacienteDAOImpl implements PacienteDAO {
 			c.setStartDate(rs.getLong("STARTDATE"));
 			c.setEndDate(rs.getLong("ENDDATE"));
 			c.setConfirmacion(rs.getInt("CONFIRMACION"));
+			c.setNotas(rs.getString("NOTAS"));
 			
 			Paciente p = new Paciente();
 			p.setId(rs.getInt("ID_PACIENTE"));
@@ -240,9 +241,10 @@ public class PacienteDAOImpl implements PacienteDAO {
 		long endDate = original.getEndDate();
 		int id = original.getId();
 		int tratamientoId = original.getTratamiento().getId();	
+		String notas = original.getNotas();
 		
-		logger.debug("cambiar cita a nueva fecha [start=" + new Date(startDate) + "end=" + new Date(endDate) + "] for id=" + id );
-		int updated = this.getJdbcTemplate().update(CAMBIAR_CITA, new Object[] {startDate, endDate, tratamientoId, id});
+		logger.debug("cambiar cita a nueva fecha [start=" + new Date(startDate) + "end=" + new Date(endDate) + "] for id=" + id + ", notas=["+notas+"]" );
+		int updated = this.getJdbcTemplate().update(CAMBIAR_CITA, new Object[] {startDate, endDate, tratamientoId, notas, id});
 		logger.debug("Affected rows = " + updated);
 		this.actuailzarPaciente(original.getPaciente());
 		nuevaCita = findCita(id);

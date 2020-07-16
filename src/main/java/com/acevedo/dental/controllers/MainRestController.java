@@ -170,6 +170,7 @@ public class MainRestController {
 		Tratamiento t = c.getTratamiento();
 		long startDate = c.getStartDate();
 		long endDate = c.getEndDate();		
+		String notas = c.getNotas();
 
 		try {
 			if(startDate == 0 || endDate == 0) {
@@ -177,7 +178,7 @@ public class MainRestController {
 				
 			}			
 			logger.debug("Vamos a agregar cita nueva");
-			int citaAgregada = this.dao.agregaCita(p, t, startDate, endDate);
+			int citaAgregada = this.dao.agregaCita(p, t, startDate, endDate, notas);
 			logger.debug("Cita agregada " + citaAgregada);
 			if(citaAgregada > 0 && id_espera != null) {
 				logger.debug("Lista de espera asociada borrada id=" + id_espera);

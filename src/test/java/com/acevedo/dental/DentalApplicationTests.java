@@ -85,7 +85,8 @@ class DentalApplicationTests {
 		t.setTratamiento("CONSULTA");
 		long startDate = 1586358000000L;
 		long endDate = 1586359800000L;
-		int id = dao.agregaCita(p, t, startDate, endDate);		
+		String notas = "notas test";
+		int id = dao.agregaCita(p, t, startDate, endDate, notas);		
 		Cita c = dao.findCita(id);
 		assertEquals(c.getId(), id);
 		

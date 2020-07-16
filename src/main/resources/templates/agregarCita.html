@@ -37,14 +37,12 @@
       		<td>
       			<input type="text" name="fecha" id="fecha" class="text ui-widget-content ui-corner-all">      			
       		</td>
-      	</tr>
-      	</tr>
-      	<tr>
-      		
+      	</tr>      	
+      	<tr>      		
       		<td>Horario</td>
       		<td>
       			<select name="horas" id="horas" class="text ui-widget-content ui-corner-all">
-`					<option></option>
+					<option></option>
 					<option value="09">09am</option>
       				<option value="10">10am</option>
       				<option value="11">11am</option>
@@ -67,8 +65,7 @@
    				</select>      			  			
      		</td>
       	</tr>	
-      	</tr>
-      	      	<tr>
+      	<tr>
       		<td><label for="duracion">Duracion</label></td>
       		<td>
       			<select name="duracion" id="duracion" class="text ui-widget-content ui-corner-all">
@@ -78,7 +75,6 @@
       			</select>
       		</td>
       	</tr>   
-      	</tr>
 		<tr>
       		<td><label for="tratamiento">Tratamiento</label></td>
       		<td>
@@ -87,7 +83,10 @@
       			</select>
       		</td>
       	</tr>    
-  	      	      	   	      	      	
+  	    <tr>
+  	    	<td>Notas: </td>
+  	    	<td><textarea rows="2" cols="24" id="notas" name="notas" class="text ui-widget-content ui-corner-all"></textarea></td>
+  	    </tr>    	   	      	      	
       	<tr>
       		<td colspan="2">
       		<!-- Allow form submission with keyboard without duplicating the dialog button -->
@@ -240,6 +239,7 @@ $(document).ready(function() {
 		var id_paciente =  $("#id_paciente").val();
 		var id_cita =  $("#id_cita").val();			
 		var tratamiento = $( "#tratamiento" ).text();
+		var notas = $('#notas').val();
 		var id_tratamiento_option = $( "#tratamiento" ).val();
 		if(id_tratamiento_option == null || id_tratamiento_option == "") {
 			alert("Por favor selecciona el motivo de la consulta");
@@ -277,7 +277,8 @@ $(document).ready(function() {
 				     	},
 				     	tratamiento: {
 				     		id: id_tratamiento_option			     	
-				     	}
+				     	},
+				     	notas: notas
 					}
 				  ),
 			beforeSend: function(req) {
@@ -317,6 +318,7 @@ $(document).ready(function() {
 		$( '#buscar' ).val('');
 		$('#id_paciente').val('');
 		$('#id_cita').val('');
+		$('#notas').val('');
 		
 		dialog.dialog('close');
 	}

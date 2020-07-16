@@ -8,6 +8,7 @@ public class Cita {
 	private Paciente paciente;
 	private Tratamiento tratamiento;
 	private int confirmacion;
+	private String notas;
 	
 	public long getStartDate() {
 		return startDate;
@@ -44,6 +45,12 @@ public class Cita {
 	}
 	public void setConfirmacion(int confirmacion) {
 		this.confirmacion = confirmacion;
+	}
+	public String getNotas() {
+		return notas;
+	}
+	public void setNotas(String notas) {
+		this.notas = notas;
 	}
 	
 	

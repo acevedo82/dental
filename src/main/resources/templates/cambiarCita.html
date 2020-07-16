@@ -81,7 +81,10 @@
       			</select>
       		</td>
       	</tr>    
-  	      	      	   	      	      	
+  	    <tr>
+  	    	<td>Notas: </td>
+  	    	<td><textarea rows="2" cols="24" id="notas" name="notas" class="text ui-widget-content ui-corner-all"></textarea></td>
+  	    </tr>    	   	      	      	   	      	      	
       	<tr>
       		<td colspan="2">
       		<!-- Allow form submission with keyboard without duplicating the dialog button -->
@@ -315,6 +318,7 @@ $(document).ready(function() {
 		var id_cita =  $("#id_cita").val();			
 		var tratamiento = $( "#tratamiento" ).text();
 		var id_tratamiento_option = $( "#tratamiento" ).val();
+		var notas = $('#notas').val();
 		
 		//debugger
 		var invokeMethod = "PUT";
@@ -343,7 +347,8 @@ $(document).ready(function() {
 				     	},
 				     	tratamiento: {
 				     		id: id_tratamiento_option			     	
-				     	}
+				     	},
+				     	notas: notas
 					}
 				  ),
 			success: function(data){				
@@ -378,6 +383,7 @@ $(document).ready(function() {
 		$( '#buscar' ).val('');
 		$('#id_paciente').val('');
 		$('#id_cita').val('');		
+		$('#notas').val('');
 	}
 	
 	function loadTratamiento() {			
@@ -443,15 +449,20 @@ $(document).ready(function() {
 				if(mins == 0 || mins == "0") {
 					mins = "00";
 				}
+				if(hours < 10) {
+					hours ="0"+hours;
+				}
 				$("#horas").val(hours);
 				$("#minutos").val(mins);
 									
-				var tratamiento = data['tratamiento']['id'];					
+				var tratamiento = data['tratamiento']['id'];
+				var notas = data['notas'];
 												
 				
 				$("#duracion").val(duracion);
 				$("#tratamiento").val(tratamiento);
 				$('#id_tratamiento').val(tratamiento);
+				$('#notas').val(notas);
 				//$("#tratamiento").prop("disabled", true);
 				
 			},
