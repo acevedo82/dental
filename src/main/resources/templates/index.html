@@ -26,7 +26,12 @@
 				    	<button id="buttonAgregarCita" name="buttonAgregarCita" class="ui-button ui-widget ui-corner-all">Agregar Cita</button>				    						    	
 				    </p>
 				  </div>			
-
+				  <h3>Paciente</h3>
+				  <div>
+				    <p>				    				   
+				    	<button id="buttonEditarPaciente" name="buttonEditarPaciente" class="ui-button ui-widget ui-corner-all">Editar Paciente</button>				    						    	
+				    </p>
+				  </div>
 			</div>
 		</td>
 		<td><div id="calendar"></div></td>
@@ -51,6 +56,12 @@ $(document).ready(function() {
 		location.href="/mobile";
 		
 	});
+
+	$('#buttonEditarPaciente').click(function() {
+		location.href="/editarPaciente";
+		
+	});
+	
 	
 	$('#menu').accordion({
 			heightStyle: "fill"		

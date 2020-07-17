@@ -37,6 +37,12 @@ public class MainController {
 		return "listaDeEspera";
 	}
 	
+	@RequestMapping( value = "/editarPaciente", method = RequestMethod.GET)
+	public String preparaEditar(Model model) {
+		model.addAttribute("date", new java.util.Date());
+		return "editarPaciente";
+	}	
+	
 	@RequestMapping( value = "/mobile", method = RequestMethod.GET)
 	public String mobileIndex(Model model, @RequestParam(name = "fecha", required = false) String fecha) {
 		if(StringUtils.isEmpty(fecha)) {

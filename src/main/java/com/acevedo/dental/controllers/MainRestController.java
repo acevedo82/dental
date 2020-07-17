@@ -43,6 +43,12 @@ public class MainRestController {
 		return p;
 	}
 	
+	@RequestMapping(value = "/paciente/{id}", method = RequestMethod.POST)
+	public int editarPaciente(@RequestBody Paciente p) {
+		int affected  = this.dao.actuailzarPaciente(p);		
+		return affected;
+	}
+	
 	@RequestMapping(value = "/paciente", method = RequestMethod.GET)
 	public @ResponseBody String obtenerPacientes() throws Exception {
 		List<Paciente> p = this.dao.findPacientes();		 		
