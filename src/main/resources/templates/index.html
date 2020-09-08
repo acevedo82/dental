@@ -148,10 +148,9 @@ function agregarEvento(event, id_espera) {
 	debugger;	
 	var year = event.start.getFullYear();
 	var month = event.start.getMonth();
+	month = month+1;
 	if(month < 10) {
-		month = month+1;
-		if(month < 10)
-			month = "0" + month;
+		month = "0" + month;
 	}
 	var day = event.start.getDate();
 	if(day < 10) {
