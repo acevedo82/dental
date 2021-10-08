@@ -176,6 +176,7 @@ public class PacienteDAOImpl implements PacienteDAO {
 	public List<Cita> findCitas() {
 		// Obtener todas las citas
 		List<Cita> retVal = null;
+		logger.info("SQL=" + FIND_CITAS_EN_90_DIAS_SQL);
 		retVal = this.getJdbcTemplate().query(FIND_CITAS_EN_90_DIAS_SQL, new CitaRowMapper());
 		return retVal;
 	}	

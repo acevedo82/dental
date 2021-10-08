@@ -208,7 +208,10 @@ public class MainRestController {
 	
 	@RequestMapping( value = "/cita", method = RequestMethod.GET)
 	public @ResponseBody String citas() throws Exception {
+		long startTime = System.currentTimeMillis();
 		List<Cita> citas = this.dao.findCitas();
+		long endTime = System.currentTimeMillis();
+		logger.info("Obtener " + (citas != null ? citas.size() : -1) +" las citas tomo " + (endTime - startTime) + " ms");
 		return mapper.writeValueAsString(citas);
 	}
 	
