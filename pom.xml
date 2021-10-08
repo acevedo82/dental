@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.acevedo</groupId>
 	<artifactId>dental</artifactId>
-	<version>18</version>
+	<version>19</version>
 	<name>dental</name>
 	<description>Reservaciones</description>
 
