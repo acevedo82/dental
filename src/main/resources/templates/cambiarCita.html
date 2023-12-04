@@ -436,13 +436,13 @@ $(document).ready(function() {
 				var duracion = (endDate - startDate)/(60*1000);				
 				var year = startDate.getFullYear();
 				var month = startDate.getMonth();
-				if(month < 10) {
-					month = month+1;
-					if(month >= 10)
-						month = "" + month;
-					else 
-						month = "0" + month;
-				}
+				month = month+1;
+				
+				if(month >= 10)
+					month = "" + month;
+				else 
+					month = "0" + month;
+
 				var day = startDate.getDate();
 				if(day < 10) {
 					day = "0" + day;
